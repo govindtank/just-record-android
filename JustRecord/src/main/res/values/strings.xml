@@ -14,9 +14,9 @@
     <string name="record_chronometer_initial_format">Initial format:<xliff:g id="initial-format">%</xliff:g></string>
 
     <!--Saved Screen Strings-->
-    <string name="saved_button_filter_date_title">Date</string>
-    <string name="saved_button_filter_name_title">Name</string>
-    <string name="saved_button_filter_length_title">Length</string>
-    <string name="saved_button_filter_size_title">Size</string>
+    <string name="saved_button_filter_date_title">DATE</string>
+    <string name="saved_button_filter_name_title">NAME</string>
+    <string name="saved_button_filter_length_title">LENGTH</string>
+    <string name="saved_button_filter_size_title">SIZE</string>
 
 </resources>

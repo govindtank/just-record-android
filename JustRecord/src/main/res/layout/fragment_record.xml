@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/record_button_record"
         android:text="@string/record_textView_timer_initial"
         android:textSize="40sp"
         android:textColor="@android:color/white"/>
