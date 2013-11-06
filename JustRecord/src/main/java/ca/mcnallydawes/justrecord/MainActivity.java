@@ -1,23 +1,28 @@
 package ca.mcnallydawes.justrecord;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 
@@ -52,6 +57,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
 
         // When swiping between different sections, select the corresponding
         // tab. We can also use ActionBar.Tab#select() to do this if we have
@@ -91,7 +97,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -162,6 +168,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        private Chronometer recordChronometer;
+        private boolean recordChronometerRunning = false;
+        private long recordPauseTime = 0;
+
+        private List<Button> savedFilterButtons;
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -207,11 +218,44 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         }
 
         private void setupRecord(View rootView) {
-            TextView titleTV = (TextView) rootView.findViewById(R.id.record_textView_title);
-            titleTV.setText("Record");
+            recordChronometer = (Chronometer) rootView.findViewById(R.id.record_chronometer_timer);
+
+            Button recordBtn = (Button) rootView.findViewById(R.id.record_button_record);
+            recordBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recordChronometerRunning) {
+                        recordPauseTime = recordChronometer.getBase() - SystemClock.elapsedRealtime();
+                        recordChronometer.stop();
+                    } else {
+                        recordChronometer.setBase(SystemClock.elapsedRealtime() + recordPauseTime );
+                        recordChronometer.start();
+                    }
+                    recordChronometerRunning = !recordChronometerRunning;
+                    view.setSelected(recordChronometerRunning);
+                }
+            });
         }
 
         private void setupSaved(View rootView) {
+            savedFilterButtons = new ArrayList<Button>();
+
+            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_date));
+            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_name));
+            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_length));
+            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
+
+            for(Button btn : savedFilterButtons) {
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        savedFilterButtonTap(view);
+                    }
+                });
+            }
+
+            savedFilterButtons.get(0).setSelected(true);
+
             TextView titleTV = (TextView) rootView.findViewById(R.id.saved_textView_title);
             titleTV.setText("Saved");
         }
@@ -224,6 +268,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         private void setupAds(View rootView) {
             TextView titleTV = (TextView) rootView.findViewById(R.id.ads_textView_title);
             titleTV.setText("Ads");
+        }
+
+        private void savedFilterButtonTap (View btn) {
+            for(Button item : savedFilterButtons) {
+                item.setSelected(false);
+            }
+            btn.setSelected(true);
         }
     }
 }

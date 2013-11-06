@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="ca.mcnallydawes.justrecord.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="ca.mcnallydawes.justrecord.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.mcnallydawes.justrecord.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

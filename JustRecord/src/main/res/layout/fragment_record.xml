@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
-    <TextView android:id="@+id/record_textView_title"
+    android:background="@android:color/black">
+    <Button android:id="@+id/record_button_record"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/record_record_button_selector"/>
+    <Chronometer android:id="@+id/record_chronometer_timer"
+        android:format="@string/record_chronometer_initial_format"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"/>
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/record_textView_timer_initial"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"/>
+</RelativeLayout>
