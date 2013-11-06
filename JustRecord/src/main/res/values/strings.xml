@@ -12,6 +12,9 @@
     <!--Record Screen Strings-->
     <string name="record_textView_timer_initial">00:00</string>
     <string name="record_chronometer_initial_format">Initial format:<xliff:g id="initial-format">%</xliff:g></string>
+    <string name="record_button_cancel">CANCEL</string>
+    <string name="record_button_finish">FINISH</string>
+    <string name="record_button_record">RECORD</string>
 
     <!--Saved Screen Strings-->
     <string name="saved_button_filter_date_title">DATE</string>

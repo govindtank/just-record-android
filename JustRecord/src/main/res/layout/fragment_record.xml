@@ -1,21 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
-    <Button android:id="@+id/record_button_record"
-        android:layout_height="150dp"
-        android:layout_width="150dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/record_record_button_selector"/>
-    <Chronometer android:id="@+id/record_chronometer_timer"
-        android:format="@string/record_chronometer_initial_format"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/record_button_record"
-        android:text="@string/record_textView_timer_initial"
-        android:textSize="40sp"
-        android:textColor="@android:color/white"/>
-</RelativeLayout>
+    android:orientation="vertical">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/black">
+        <Button android:id="@+id/record_button_record"
+            android:layout_height="150dp"
+            android:layout_width="150dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/record_record_button_selector"/>
+        <Chronometer android:id="@+id/record_chronometer_timer"
+            android:format="@string/record_chronometer_initial_format"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/record_button_record"
+            android:text="@string/record_textView_timer_initial"
+            android:textSize="40sp"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">
+        <Button
+            android:id="@+id/record_button_record_cancel"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/record_button_record"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/saved_button_filter_selector"/>
+        <Button
+            android:id="@+id/record_button_finish"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/record_button_finish"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/saved_button_filter_selector"
+            android:visibility="gone"/>
+    </LinearLayout>
+</LinearLayout>
