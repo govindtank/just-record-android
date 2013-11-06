@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Just Record</string>
+    <string name="title_section1">Record</string>
+    <string name="title_section2">Saved</string>
+    <string name="title_section3">Edit</string>
+    <string name="title_section4">Ads</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
