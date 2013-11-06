@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
-    <!--<ListView-->
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/black">
+        <!--<ListView-->
         <!--android:layout_height="match_parent"-->
         <!--android:layout_width="match_parent">-->
-    <!--</ListView>-->
-    <TextView android:id="@+id/saved_textView_title"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerInParent="true"
-        android:textColor="@android:color/white"/>
+        <!--</ListView>-->
+        <TextView android:id="@+id/saved_textView_title"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
     <LinearLayout
         android:layout_height="50dp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
         android:background="@android:color/transparent">
         <Button
             android:id="@+id/saved_button_filter_date"
@@ -61,4 +66,4 @@
             android:textColor="@android:color/white"
             android:background="@drawable/saved_button_filter_selector"/>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -3,7 +3,6 @@ package ca.mcnallydawes.justrecord;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 
 import android.app.Activity;
 import android.app.ActionBar;
