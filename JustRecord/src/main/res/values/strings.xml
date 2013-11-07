@@ -4,19 +4,19 @@
     <string name="app_name">Just Record</string>
     <string name="title_section1">Record</string>
     <string name="title_section2">Saved</string>
-    <string name="title_section3">Edit</string>
-    <string name="title_section4">Ads</string>
+    <string name="title_section3">About</string>
+    <string name="title_activity_edit">Edit</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!--Record Screen Strings-->
+    <!-- Record Screen Strings -->
     <string name="record_textView_timer_initial">00:00</string>
     <string name="record_chronometer_initial_format">Initial format:<xliff:g id="initial-format">%</xliff:g></string>
     <string name="record_button_cancel">CANCEL</string>
     <string name="record_button_finish">FINISH</string>
     <string name="record_button_record">RECORD</string>
 
-    <!--Saved Screen Strings-->
+    <!-- Saved Screen Strings -->
     <string name="saved_button_filter_date_title">DATE</string>
     <string name="saved_button_filter_name_title">NAME</string>
     <string name="saved_button_filter_length_title">LENGTH</string>

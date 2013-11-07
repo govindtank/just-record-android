@@ -1,7 +1,5 @@
 package ca.mcnallydawes.justrecord;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -10,7 +8,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -19,10 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 
@@ -57,7 +51,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(2);
 
         // When swiping between different sections, select the corresponding
         // tab. We can also use ActionBar.Tab#select() to do this if we have
@@ -132,13 +126,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return RecordFragment.newInstance();
+                case 1:
+                    return SavedFragment.newInstance();
+                case 2:
+                    return AboutFragment.newInstance();
+                default:
+                    return RecordFragment.newInstance();
+            }
         }
 
         @Override
         public int getCount() {
-            // Show 4 total pages.
-            return 4;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
@@ -151,196 +154,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
-                case 3:
-                    return getString(R.string.title_section4).toUpperCase(l);
             }
             return null;
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        private Chronometer recordChronometer;
-        private boolean recordChronometerRunning = false;
-        private long recordPauseTime = 0;
-        Button recordBtn;
-        Button recordCancelBtn;
-        Button recordFinishBtn;
-
-        private List<Button> savedFilterButtons;
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView;
-            switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    rootView = inflater.inflate(R.layout.fragment_record, container, false);
-                    setupRecord(rootView);
-                    break;
-                case 2:
-                    rootView = inflater.inflate(R.layout.fragment_saved, container, false);
-                    setupSaved(rootView);
-                    break;
-                case 3:
-                    rootView = inflater.inflate(R.layout.fragment_edit, container, false);
-                    setupEdit(rootView);
-                    break;
-                case 4:
-                    rootView = inflater.inflate(R.layout.fragment_ads, container, false);
-                    setupAds(rootView);
-                    break;
-                default:
-                    rootView = inflater.inflate(R.layout.fragment_main, container, false);
-                    break;
-            }
-
-            return rootView;
-        }
-
-        private void setupRecord(View rootView) {
-            recordChronometer = (Chronometer) rootView.findViewById(R.id.record_chronometer_timer);
-
-            recordBtn = (Button) rootView.findViewById(R.id.record_button_record);
-            recordBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (recordChronometerRunning) {
-                        recordPause();
-                    } else {
-                        recordStart();
-                    }
-                }
-            });
-
-            recordCancelBtn = (Button) rootView.findViewById(R.id.record_button_record_cancel);
-            recordCancelBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(recordCancelBtn.getText().toString().equalsIgnoreCase(getString(R.string.record_button_cancel))) {
-                        recordCancel();
-                    } else {
-                        recordStart();
-                    }
-                }
-            });
-
-            recordFinishBtn = (Button) rootView.findViewById(R.id.record_button_finish);
-            recordFinishBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    recordFinish();
-                }
-            });
-        }
-
-        private void setupSaved(View rootView) {
-            savedFilterButtons = new ArrayList<Button>();
-
-            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_date));
-            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_name));
-            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_length));
-            savedFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
-
-            for(Button btn : savedFilterButtons) {
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        savedFilterButtonTap(view);
-                    }
-                });
-            }
-
-            savedFilterButtons.get(0).setSelected(true);
-
-            TextView titleTV = (TextView) rootView.findViewById(R.id.saved_textView_title);
-            titleTV.setText("Saved");
-        }
-
-        private void setupEdit(View rootView) {
-            TextView titleTV = (TextView) rootView.findViewById(R.id.edit_textView_title);
-            titleTV.setText("Edit");
-        }
-
-        private void setupAds(View rootView) {
-            TextView titleTV = (TextView) rootView.findViewById(R.id.ads_textView_title);
-            titleTV.setText("Ads");
-        }
-
-        private void recordPause() {
-            recordPauseTime = recordChronometer.getBase() - SystemClock.elapsedRealtime();
-            recordChronometer.stop();
-
-            recordChronometerRunning = false;
-            recordBtn.setSelected(recordChronometerRunning);
-        }
-
-        private void recordStart() {
-            recordChronometer.setBase(SystemClock.elapsedRealtime() + recordPauseTime );
-            recordChronometer.start();
-
-            recordFinishBtn.setVisibility(View.VISIBLE);
-            recordCancelBtn.setText(getString(R.string.record_button_cancel));
-
-            recordChronometerRunning = true;
-            recordBtn.setSelected(recordChronometerRunning);
-        }
-
-        private void recordCancel() {
-            recordChronometer.setBase(SystemClock.elapsedRealtime());
-            recordChronometer.stop();
-            recordPauseTime = 0;
-
-            recordChronometerRunning = false;
-            recordBtn.setSelected(recordChronometerRunning);
-
-            recordFinishBtn.setVisibility(View.GONE);
-            recordCancelBtn.setText(getString(R.string.record_button_record));
-
-            Toast.makeText(getActivity(), "Ask if certain here.", Toast.LENGTH_SHORT).show();
-        }
-
-        private void recordFinish() {
-            recordChronometer.setBase(SystemClock.elapsedRealtime());
-            recordChronometer.stop();
-            recordPauseTime = 0;
-
-            recordChronometerRunning = false;
-            recordBtn.setSelected(recordChronometerRunning);
-
-            recordFinishBtn.setVisibility(View.GONE);
-            recordCancelBtn.setText(getString(R.string.record_button_record));
-
-            Toast.makeText(getActivity(), "Prompt for save here.", Toast.LENGTH_SHORT).show();
-        }
-
-        private void savedFilterButtonTap (View btn) {
-            for(Button item : savedFilterButtons) {
-                item.setSelected(false);
-            }
-            btn.setSelected(true);
         }
     }
 }

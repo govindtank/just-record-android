@@ -25,10 +25,18 @@
         <activity
             android:name="ca.mcnallydawes.justrecord.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="ca.mcnallydawes.justrecord.MainActivity">
+            android:parentActivityName="ca.mcnallydawes.justrecord.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.mcnallydawes.justrecord.MainActivity" />
+        </activity>
+        <activity
+            android:name="ca.mcnallydawes.justrecord.EditActivity"
+            android:label="@string/title_activity_edit"
+            android:parentActivityName="MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MainActivity" />
         </activity>
     </application>
 
