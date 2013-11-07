@@ -21,5 +21,8 @@
     <string name="saved_button_filter_name_title">NAME</string>
     <string name="saved_button_filter_length_title">LENGTH</string>
     <string name="saved_button_filter_size_title">SIZE</string>
+    <string name="saved_action_delete">Delete</string>
+    <string name="saved_action_edit">Edit</string>
+    <string name="saved_action_settings">Settings</string>
 
 </resources>

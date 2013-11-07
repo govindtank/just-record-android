@@ -7,9 +7,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -120,6 +125,45 @@ public class SavedFragment extends Fragment {
             }
         });
 
+//        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+//        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+//            @Override
+//            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+//
+//            }
+//
+//            @Override
+//            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+//                MenuInflater inflater = actionMode.getMenuInflater();
+//                inflater.inflate(R.menu.saved, menu);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+//                switch (menuItem.getItemId()) {
+//                    case R.id.saved_action_delete:
+//                        return true;
+//                    case R.id.saved_action_edit:
+//                        return true;
+//                    case R.id.saved_action_settings:
+//                        return true;
+//                    default:
+//                        return false;
+//                }
+//            }
+//
+//            @Override
+//            public void onDestroyActionMode(ActionMode actionMode) {
+//
+//            }
+//        });
+
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -143,7 +187,7 @@ public class SavedFragment extends Fragment {
                             }
                         });
                 builder.create().show();
-                return false;
+                return true;
             }
         });
 
