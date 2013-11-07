@@ -3,13 +3,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="60dp"
     android:paddingRight="5dp"
     android:paddingLeft="5dp">
-    <TextView android:id="@+id/saved_list_item_textView_name"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
+    <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:textColor="@android:color/white"/>
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+        <TextView android:id="@+id/saved_list_item_textView_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"/>
+        <TextView android:id="@+id/saved_list_item_textView_date"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#ffbebebe"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+        <!--<TextView android:id="@+id/saved_list_item_textView_duration"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textColor="@android:color/white"/>-->
+        <TextView android:id="@+id/saved_list_item_textView_size"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#ffbebebe"/>
+    </LinearLayout>
 </RelativeLayout>
