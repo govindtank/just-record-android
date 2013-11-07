@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements ActionBar.TabListener {
+public class MainActivity extends Activity implements ActionBar.TabListener, RecordFragment.OnRecordingSavedListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -112,14 +112,25 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
+    @Override
+    public void onRecordingSavedListener() {
+        ((SavedFragment) mSectionsPagerAdapter.getFragment(1)).refreshListView();
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        RecordFragment recordFragment;
+        SavedFragment savedFragment;
+        AboutFragment aboutFragment;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            recordFragment = RecordFragment.newInstance();
+            savedFragment = SavedFragment.newInstance();
+            aboutFragment = AboutFragment.newInstance();
         }
 
         @Override
@@ -128,13 +139,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    return RecordFragment.newInstance();
+                    return recordFragment;
                 case 1:
-                    return SavedFragment.newInstance();
+                    return savedFragment;
                 case 2:
-                    return AboutFragment.newInstance();
+                    return aboutFragment;
                 default:
-                    return RecordFragment.newInstance();
+                    return recordFragment;
             }
         }
 
@@ -154,6 +165,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
+            }
+            return null;
+        }
+
+        public Fragment getFragment(int position) {
+            switch (position) {
+                case 0:
+                    return recordFragment;
+                case 1:
+                    return savedFragment;
+                case 2:
+                    return aboutFragment;
             }
             return null;
         }
