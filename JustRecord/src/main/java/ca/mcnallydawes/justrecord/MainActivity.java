@@ -61,6 +61,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
             }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if(state == ViewPager.SCROLL_STATE_IDLE && mViewPager.getCurrentItem() != 1) {
+                    ((SavedFragment) mSectionsPagerAdapter.getFragment(1)).finishActionMode();
+                }
+            }
         });
 
         // For each of the sections in the app, add a tab to the action bar.

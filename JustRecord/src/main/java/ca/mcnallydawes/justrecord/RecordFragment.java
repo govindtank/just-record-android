@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.Space;
 import android.widget.Toast;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class RecordFragment extends Fragment {
     private Button mRecordButton;
     private Button mCancelButton;
     private Button mFinishButton;
+    private Space mSpace0;
     private int mNextRecordingNumber;
     private OnRecordingSavedListener mOnRecordingSavedListener;
 
@@ -94,6 +96,8 @@ public class RecordFragment extends Fragment {
             }
         });
 
+        mSpace0 = (Space) rootView.findViewById(R.id.record_space_0);
+
         return rootView;
     }
 
@@ -133,6 +137,7 @@ public class RecordFragment extends Fragment {
             mChronometer.start();
 
             mFinishButton.setVisibility(View.VISIBLE);
+            mSpace0.setVisibility(View.VISIBLE);
             mCancelButton.setText(getString(R.string.record_button_cancel));
 
             mChronometerRunning = true;
@@ -153,6 +158,7 @@ public class RecordFragment extends Fragment {
         mRecordButton.setSelected(mChronometerRunning);
 
         mFinishButton.setVisibility(View.GONE);
+        mSpace0.setVisibility(View.GONE);
         mCancelButton.setText(getString(R.string.record_button_record));
 
         stopRecording();
@@ -169,6 +175,7 @@ public class RecordFragment extends Fragment {
         mRecordButton.setSelected(mChronometerRunning);
 
         mFinishButton.setVisibility(View.GONE);
+        mSpace0.setVisibility(View.GONE);
         mCancelButton.setText(getString(R.string.record_button_record));
 
         stopRecording();

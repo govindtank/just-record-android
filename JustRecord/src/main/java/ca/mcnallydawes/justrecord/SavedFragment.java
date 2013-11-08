@@ -3,11 +3,14 @@ package ca.mcnallydawes.justrecord;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +22,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,14 +47,13 @@ public class SavedFragment extends Fragment {
     private MediaPlayer mPlayer;
     private MediaPlayerState mPlayerState;
     private int mClickedItem = -1;
+    private ActionMode mActionMode;
 
     public static SavedFragment newInstance() {
         return new SavedFragment();
     }
 
     public SavedFragment() {}
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +65,7 @@ public class SavedFragment extends Fragment {
 
         mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_date));
         mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_name));
-        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_length));
+        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_type));
         mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
 
         for(int i = 0; i < mFilterButtons.size(); i++) {
@@ -71,27 +74,31 @@ public class SavedFragment extends Fragment {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    savedFilterButtonTap(view);
-                    switch(index) {
-                        case 0:
-                            sortByDateModified();
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        case 1:
-                            sortByName();
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        case 2:
-//                            sortByLength();
-                            sortByFileType();
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        case 3:
-                            sortBySize();
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        default:
-                            break;
+                    if(mActionMode == null) {
+                        savedFilterButtonTap(view);
+                        switch(index) {
+                            case 0:
+                                sortByDateModified();
+                                mAdapter.notifyDataSetChanged();
+                                break;
+                            case 1:
+                                sortByName();
+                                mAdapter.notifyDataSetChanged();
+                                break;
+                            case 2:
+    //                            sortByLength();
+                                sortByFileType();
+                                mAdapter.notifyDataSetChanged();
+                                break;
+                            case 3:
+                                sortBySize();
+                                mAdapter.notifyDataSetChanged();
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "Can't sort while selecting", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -111,60 +118,25 @@ public class SavedFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mClickedItem == i && mPlayerState == MediaPlayerState.PLAYING) {
-                    pausePlayback();
-                    Log.d("playback", "PAUSE FROM PLAY");
-                } else if(mClickedItem == i && mPlayerState == MediaPlayerState.PAUSED) {
-                    resumePlayback();
-                    Log.d("playback", "PLAY FROM PAUSE");
-                } else if(mClickedItem == i && mPlayerState == MediaPlayerState.STOPPED) {
-                    playFile(mData.get(i));
-                    Log.d("playback", "PLAY FROM STOPPED");
-                } else if(mClickedItem != i) {
-                    stopPlayback();
-                    playFile(mData.get(i));
-                    Log.d("playback", "PLAY NEW");
+                if(mActionMode == null) {
+                    if(mClickedItem == i && mPlayerState == MediaPlayerState.PLAYING) {
+                        pausePlayback();
+                        Log.d("playback", "PAUSE FROM PLAY");
+                    } else if(mClickedItem == i && mPlayerState == MediaPlayerState.PAUSED) {
+                        resumePlayback();
+                        Log.d("playback", "PLAY FROM PAUSE");
+                    } else if(mClickedItem == i && mPlayerState == MediaPlayerState.STOPPED) {
+                        playFile(mData.get(i));
+                        Log.d("playback", "PLAY FROM STOPPED");
+                    } else if(mClickedItem != i) {
+                        stopPlayback();
+                        playFile(mData.get(i));
+                        Log.d("playback", "PLAY NEW");
+                    }
+                    mClickedItem = i;
+                } else {
+                    onListItemSelect(i);
                 }
-                mClickedItem = i;
-            }
-        });
-
-        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                MenuInflater inflater = actionMode.getMenuInflater();
-                inflater.inflate(R.menu.saved, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.saved_action_delete:
-                        return false;
-                    case R.id.saved_action_edit:
-                        return false;
-                    case R.id.saved_action_share:
-                        return false;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-
             }
         });
 
@@ -195,7 +167,37 @@ public class SavedFragment extends Fragment {
 //            }
 //        });
 
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                onListItemSelect(i);
+                return true;
+            }
+        });
+
         return rootView;
+    }
+
+    private void onListItemSelect(int position) {
+        mAdapter.toggleSelection(position);
+        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
+
+        if(hasCheckedItems && mActionMode == null) {
+            mActionMode = getActivity().startActionMode(new ActionModeCallback());
+        } else if(!hasCheckedItems && mActionMode != null) {
+            mActionMode.finish();
+        }
+
+        if(mActionMode != null) {
+            mActionMode.invalidate();
+            mActionMode.setTitle(String.valueOf(mAdapter.getSelectedCount() + " selected"));
+        }
+    }
+
+    public void finishActionMode() {
+        if(mActionMode != null) {
+            mActionMode.finish();
+        }
     }
 
     private void playFile(File file) {
@@ -294,7 +296,7 @@ public class SavedFragment extends Fragment {
     private void sortByFileType() {
         Collections.sort(mData, new Comparator<File>() {
             public int compare(File a, File b) {
-                return a.getName().split(".")[1].compareTo(b.getName().split(".")[1]);
+                return a.getName().split("\\.")[1].compareTo(b.getName().split("\\.")[1]);
             }
         });
     }
@@ -333,5 +335,95 @@ public class SavedFragment extends Fragment {
                 else return 0;
             }
         });
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.saved, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            if(mAdapter.getSelectedCount() > 1) {
+                menu.findItem(R.id.saved_action_share).setVisible(false);
+                menu.findItem(R.id.saved_action_edit).setVisible(false);
+                return true;
+            } else {
+                menu.findItem(R.id.saved_action_share).setVisible(true);
+                menu.findItem(R.id.saved_action_edit).setVisible(true);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.saved_action_edit:
+                    startActivity(new Intent(getActivity(), EditActivity.class));
+                    return true;
+                case R.id.saved_action_share:
+                    SparseBooleanArray shareSelected = mAdapter.getSelectedIds();
+                    int selectedPosition = 0;
+                    for(int i = (shareSelected.size() - 1); i >= 0; i--) {
+                        if(shareSelected.valueAt(i)) {
+                            selectedPosition = shareSelected.keyAt(i);
+                        }
+                    }
+
+                    Uri uri = Uri.parse(mData.get(selectedPosition).getPath());
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("audio/*");
+                    share.putExtra(Intent.EXTRA_STREAM, uri);
+                    startActivity(Intent.createChooser(share, "Share " + mData.get(selectedPosition).getName()));
+
+                    return true;
+                case R.id.saved_action_delete:
+                    SparseBooleanArray deleteSelected = mAdapter.getSelectedIds();
+                    ArrayList<Integer> selectedPositions = new ArrayList<Integer>();
+                    for(int i = (deleteSelected.size() - 1); i >= 0; i--) {
+                        if(deleteSelected.valueAt(i)) {
+                            selectedPositions.add(deleteSelected.keyAt(i));
+                        }
+                    }
+
+                    final ArrayList<Integer> finalSelectedPositions = selectedPositions;
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Delete")
+                            .setMessage("Are you sure you want to delete " +
+                                    (selectedPositions.size() > 1 ?
+                                            "these " + selectedPositions.size() + " items?" :
+                                            mData.get(selectedPositions.get(0)).getName() + "?"))
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    for (int index : finalSelectedPositions) {
+                                        mData.get(index).delete();
+                                    }
+                                    refreshListView();
+                                    dialogInterface.cancel();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                    builder.create().show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mAdapter.removeSelection();
+            mActionMode = null;
+        }
     }
 }

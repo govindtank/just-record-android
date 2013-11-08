@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/black">
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/black">
+        android:layout_weight="1">
         <Button android:id="@+id/record_button_record"
             android:layout_height="150dp"
             android:layout_width="150dp"
@@ -38,6 +38,10 @@
             android:textSize="12sp"
             android:textColor="@android:color/white"
             android:background="@drawable/saved_button_filter_selector"/>
+        <Space android:id="@+id/record_space_0"
+            android:layout_height="match_parent"
+            android:layout_width="1dp"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/record_button_finish"
             android:layout_height="match_parent"

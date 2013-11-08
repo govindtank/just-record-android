@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="saved_button_background">#ff424242</color>
+    <color name="saved_button_background">#ff424242</color>\
+    <color name="holo_red_light">@android:color/holo_red_light</color>
+    <color name="holo_red_dark">@android:color/holo_red_dark</color>
+    <color name="transparent_holo_red_light">@android:color/holo_red_light</color>
+    <color name="transparent_holo_red_dark">@android:color/holo_red_dark</color>
 </resources>
