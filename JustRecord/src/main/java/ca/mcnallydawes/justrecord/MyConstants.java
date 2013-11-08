@@ -13,4 +13,6 @@ public class MyConstants {
     public static File  APP_DIRECTORY_FILE() {
         return new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JustRecord");
     }
+    public static String EDIT_ACTIVITY_FILE_PATH = "ca.mcnallydawes.justrecord.pathToEditFile";
+    public static String EDIT_ACTIVITY_BUNDLE = "ca.mcnallydawes.justrecord.EditActivity.Bundle";
 }

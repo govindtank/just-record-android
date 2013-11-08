@@ -18,7 +18,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by jeffrey on 11/6/13.
@@ -69,6 +68,9 @@ public class RecordFragment extends Fragment {
 
         mChronometer = (Chronometer) rootView.findViewById(R.id.record_chronometer_timer);
 
+        /*
+        Setup all the buttons.
+         */
         mRecordButton = (Button) rootView.findViewById(R.id.record_button_record);
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,8 +127,7 @@ public class RecordFragment extends Fragment {
     public void onStop() {
         super.onStop();
         if(mRecorder != null) {
-            mRecorder.release();
-            mRecorder = null;
+            stopRecording();
         }
     }
 
@@ -165,7 +166,6 @@ public class RecordFragment extends Fragment {
             mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
-            mOnRecordingSavedListener.onRecordingSavedListener();
         }
     }
 
@@ -188,6 +188,7 @@ public class RecordFragment extends Fragment {
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.stop();
         mPauseTime = 0;
+        mPartialRecordingNumber = 0;
 
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
@@ -203,6 +204,8 @@ public class RecordFragment extends Fragment {
         Combine all partial recordings here, reset the partial number, change the mNextRecordingNumber.
          */
 
+        mOnRecordingSavedListener.onRecordingSavedListener();
+
         Toast.makeText(getActivity(), "Prompt for save here.", Toast.LENGTH_SHORT).show();
     }
 
@@ -213,12 +216,7 @@ public class RecordFragment extends Fragment {
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
 
-        if(mRecorder != null) {
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
-            mOnRecordingSavedListener.onRecordingSavedListener();
-        }
+        stopRecording();
 
         mPartialRecordingNumber++;
     }

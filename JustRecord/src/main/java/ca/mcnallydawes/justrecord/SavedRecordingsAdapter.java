@@ -83,6 +83,32 @@ public class SavedRecordingsAdapter extends ArrayAdapter<File> {
         }
     }
 
+    private String getFileDuration(File file) {
+        MediaPlayer player = new MediaPlayer();
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        try {
+            player.setDataSource(file.getPath());
+            player.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int duration = player.getDuration();
+        if(duration < 0) {
+            return "Error";
+        }
+
+        int seconds = duration / 1000;
+        int minutes = seconds / 60;
+        seconds = seconds - (minutes * 60);
+
+        String minuteString = minutes > 9 ? Integer.toString(minutes) : "0" + Integer.toString(minutes);
+        String secondsString = seconds > 9 ? Integer.toString(seconds) : "0" + Integer.toString(seconds);
+
+        return minuteString + ":" + secondsString;
+    }
+
     public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }

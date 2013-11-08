@@ -333,21 +333,27 @@ public class SavedFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            SparseBooleanArray selected = mAdapter.getSelectedIds();
+            ArrayList<Integer> selectedPositions = new ArrayList<Integer>();
+            int selectedPosition = 0;
+
+            for(int i = (selected.size() - 1); i >= 0; i--) {
+                if(selected.valueAt(i)) {
+                    selectedPosition = selected.keyAt(i);
+                    selectedPositions.add(selected.keyAt(i));
+                }
+            }
+
             switch (menuItem.getItemId()) {
                 case R.id.saved_action_edit:
-                    startActivity(new Intent(getActivity(), EditActivity.class));
+                    Intent editIntent = new Intent(getActivity(), EditActivity.class);
+                    editIntent.putExtra(MyConstants.EDIT_ACTIVITY_FILE_PATH, mData.get(selectedPosition).getAbsolutePath());
+                    startActivity(editIntent);
+
                     mAdapter.removeSelection();
                     if(mActionMode != null) mActionMode.finish();
                     return true;
                 case R.id.saved_action_share:
-                    SparseBooleanArray shareSelected = mAdapter.getSelectedIds();
-                    int selectedPosition = 0;
-                    for(int i = (shareSelected.size() - 1); i >= 0; i--) {
-                        if(shareSelected.valueAt(i)) {
-                            selectedPosition = shareSelected.keyAt(i);
-                        }
-                    }
-
                     Uri uri = Uri.parse(mData.get(selectedPosition).getPath());
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.setType("audio/*");
@@ -358,14 +364,6 @@ public class SavedFragment extends Fragment {
                     if(mActionMode != null) mActionMode.finish();
                     return true;
                 case R.id.saved_action_delete:
-                    SparseBooleanArray deleteSelected = mAdapter.getSelectedIds();
-                    ArrayList<Integer> selectedPositions = new ArrayList<Integer>();
-                    for(int i = (deleteSelected.size() - 1); i >= 0; i--) {
-                        if(deleteSelected.valueAt(i)) {
-                            selectedPositions.add(deleteSelected.keyAt(i));
-                        }
-                    }
-
                     final ArrayList<Integer> finalSelectedPositions = selectedPositions;
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
