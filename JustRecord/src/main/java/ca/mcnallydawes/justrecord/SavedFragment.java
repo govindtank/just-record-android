@@ -107,7 +107,7 @@ public class SavedFragment extends Fragment {
         mFilterButtons.get(0).setSelected(true);
 
         mListView = (ListView) rootView.findViewById(R.id.saved_listView_list);
-        mData = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JustRecord"));
+        mData = getListFiles(MyConstants.APP_DIRECTORY_FILE());
 
         sortByDateModified();
 
@@ -139,33 +139,6 @@ public class SavedFragment extends Fragment {
                 }
             }
         });
-
-//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                final int index = i;
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Delete")
-//                        .setMessage("Are you sure you want to delete " + mData.get(i) + "?")
-//                        .setCancelable(false)
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JustRecord/" + mData.get(index)).delete();
-//                                refreshListView();
-//                                dialogInterface.cancel();
-//                            }
-//                        })
-//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                dialogInterface.cancel();
-//                            }
-//                        });
-//                builder.create().show();
-//                return true;
-//            }
-//        });
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -266,9 +239,10 @@ public class SavedFragment extends Fragment {
 
     public void refreshListView() {
         mData.clear();
-        ArrayList<File> fileNames = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JustRecord"));
+        ArrayList<File> fileNames = getListFiles(MyConstants.APP_DIRECTORY_FILE());
         for(File file : fileNames) {
-            mData.add(file);
+//            if(!file.getName().contains("ca.mcnallydawes.justrecord"))
+                mData.add(file);
         }
 
         sortByDateModified();

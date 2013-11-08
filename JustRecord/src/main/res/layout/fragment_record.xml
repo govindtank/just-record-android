@@ -29,7 +29,7 @@
         android:orientation="horizontal"
         android:background="@android:color/transparent">
         <Button
-            android:id="@+id/record_button_record_cancel"
+            android:id="@+id/record_button_record_alt"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -38,6 +38,17 @@
             android:textSize="12sp"
             android:textColor="@android:color/white"
             android:background="@drawable/saved_button_filter_selector"/>
+        <Button
+            android:id="@+id/record_button_cancel"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/record_button_cancel"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/saved_button_filter_selector"
+            android:visibility="gone"/>
         <Space android:id="@+id/record_space_0"
             android:layout_height="match_parent"
             android:layout_width="1dp"

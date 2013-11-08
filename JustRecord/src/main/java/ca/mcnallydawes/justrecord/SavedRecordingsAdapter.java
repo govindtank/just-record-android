@@ -61,6 +61,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<File> {
 
         holder.nameTV.setText(mData.get(position).getName());
         holder.dateTV.setText(new SimpleDateFormat("dd/MM/yyyy, hh:mm aa").format(new Date(mData.get(position).lastModified())));
+        holder.durationTV.setText("");
         holder.sizeTV.setText(getFileSize(mData.get(position).length()));
 
         //Load the length of the recording in an AsyncTask, seems to take some time
