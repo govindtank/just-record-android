@@ -362,6 +362,8 @@ public class SavedFragment extends Fragment {
             switch (menuItem.getItemId()) {
                 case R.id.saved_action_edit:
                     startActivity(new Intent(getActivity(), EditActivity.class));
+                    mAdapter.removeSelection();
+                    if(mActionMode != null) mActionMode.finish();
                     return true;
                 case R.id.saved_action_share:
                     SparseBooleanArray shareSelected = mAdapter.getSelectedIds();
@@ -378,6 +380,8 @@ public class SavedFragment extends Fragment {
                     share.putExtra(Intent.EXTRA_STREAM, uri);
                     startActivity(Intent.createChooser(share, "Share " + mData.get(selectedPosition).getName()));
 
+                    mAdapter.removeSelection();
+                    if(mActionMode != null) mActionMode.finish();
                     return true;
                 case R.id.saved_action_delete:
                     SparseBooleanArray deleteSelected = mAdapter.getSelectedIds();
@@ -404,6 +408,8 @@ public class SavedFragment extends Fragment {
                                         mData.get(index).delete();
                                     }
                                     refreshListView();
+                                    mAdapter.removeSelection();
+                                    if(mActionMode != null) mActionMode.finish();
                                     dialogInterface.cancel();
                                 }
                             })
