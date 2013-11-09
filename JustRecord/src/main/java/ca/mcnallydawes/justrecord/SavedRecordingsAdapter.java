@@ -2,8 +2,6 @@ package ca.mcnallydawes.justrecord;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by H100173 on 11/7/13.
@@ -81,7 +75,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         holder.durationTV.setText(recording.getDurationString());
         holder.sizeTV.setText(recording.getSizeString());
 
-        convertView.setBackgroundColor(mSelectedItemsIds.get(position) ? mContext.getResources().getColor(R.color.holo_red_dark) : Color.TRANSPARENT);
+        convertView.setBackgroundColor(mSelectedItemsIds.get(position) ? mContext.getResources().getColor(R.color.transparent_holo_red_dark) : Color.TRANSPARENT);
 
         if(position == mActiveItem.index) {
             UIUtils.BitmapWorkerTask bitmapWorkerTask = new UIUtils.BitmapWorkerTask(holder.thumbnailIV, mContext);
@@ -94,40 +88,9 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         return convertView;
     }
 
-    private String getFileSize(long length) {
-        if(length < 1024) {
-            return String.valueOf(length) + " B";
-        } else if(length < 1048576) {
-            return String.valueOf(length / 1024) + " KB";
-        } else {
-            return String.valueOf(length / 1048576) + " MB";
-        }
-    }
-
-    private String getFileDuration(File file) {
-        MediaPlayer player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            player.setDataSource(file.getPath());
-            player.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int duration = player.getDuration();
-        if(duration < 0) {
-            return "Error";
-        }
-
-        int seconds = duration / 1000;
-        int minutes = seconds / 60;
-        seconds = seconds - (minutes * 60);
-
-        String minuteString = minutes > 9 ? Integer.toString(minutes) : "0" + Integer.toString(minutes);
-        String secondsString = seconds > 9 ? Integer.toString(seconds) : "0" + Integer.toString(seconds);
-
-        return minuteString + ":" + secondsString;
+    public void initActiveItem() {
+        mActiveItem.index = -1;
+        mActiveItem.isPlaying = true;
     }
 
     public void showPlayingItem(int index) {

@@ -16,7 +16,11 @@ import android.widget.Space;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
@@ -153,9 +157,6 @@ public class RecordFragment extends Fragment {
             }
 
             mRecorder.start();
-
-            mNextRecordingNumber++;
-            setNextRecordingNumber(mNextRecordingNumber);
         } else {
             Toast.makeText(getActivity(), "Can't read/write to storage.", Toast.LENGTH_SHORT).show();
         }
@@ -170,41 +171,57 @@ public class RecordFragment extends Fragment {
     }
 
     private void cancelRecording() {
-        setRecordButtonVisible(true);
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.stop();
         mPauseTime = 0;
 
+        stopRecording();
+
+        /*
+        Recording was cancelled so we can safely delete it. But we should be asking first.
+         */
+        new File(MyConstants.APP_DIRECTORY_STRING + "/" + PARTIAL_RECORDING_NAME + getRecordingString(mPartialRecordingNumber) + ".mp4").delete();
+
+        mPauseTime = 0;
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
+        mPartialRecordingNumber = 0;
 
-        stopRecording();
+        mRecordButton.setText(R.string.record_button_record);
+        setRecordButtonVisible(true);
 
         Toast.makeText(getActivity(), "Ask if certain here.", Toast.LENGTH_SHORT).show();
     }
 
     private void finishRecording() {
-        setRecordButtonVisible(true);
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.stop();
         mPauseTime = 0;
-//        mPartialRecordingNumber = 0;
 
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
 
         stopRecording();
 
-        ArrayList<File> allRecordings = getListFiles(MyConstants.APP_DIRECTORY_FILE());
-        ArrayList<File> partialRecordings = new ArrayList<File>();
-        for(File file : allRecordings) {
-            if(file.getName().contains("ca.mcnallydawes.justrecord")) partialRecordings.add(file);
-        }
         /*
         Combine all partial recordings here, reset the partial number, change the mNextRecordingNumber.
          */
+        ArrayList<File> allRecordings = getListFiles(MyConstants.APP_DIRECTORY_FILE());
+        ArrayList<File> partialRecordings = new ArrayList<File>();
+        for(File file : allRecordings) {
+            if(file.getName().contains(MyConstants.APP_IDENTIFIER)) partialRecordings.add(file);
+        }
+
+        for(File file : partialRecordings) {
+            if(rename(file, new File(MyConstants.APP_DIRECTORY_STRING + "/" + DEFAULT_RECORDING_NAME + getRecordingString(mNextRecordingNumber) + ".mp4"))) {
+                mPartialRecordingNumber = 0;
+                mNextRecordingNumber++;
+                setNextRecordingNumber(mNextRecordingNumber);
+            }
+        }
 
         mOnRecordingSavedListener.onRecordingSavedListener();
+        setRecordButtonVisible(true);
 
         Toast.makeText(getActivity(), "Prompt for save here.", Toast.LENGTH_SHORT).show();
     }
@@ -212,7 +229,6 @@ public class RecordFragment extends Fragment {
     private void pauseRecording() {
         mPauseTime = mChronometer.getBase() - SystemClock.elapsedRealtime();
         mChronometer.stop();
-
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
 
@@ -269,5 +285,26 @@ public class RecordFragment extends Fragment {
         } else {
             return String.valueOf(num);
         }
+    }
+
+//    public void copy(File src, File dst) throws IOException {
+//        InputStream in = new FileInputStream(src);
+//        OutputStream out = new FileOutputStream(dst);
+//
+//        // Transfer bytes from in to out
+//        byte[] buf = new byte[1024];
+//        int len;
+//        while ((len = in.read(buf)) > 0) {
+//            out.write(buf, 0, len);
+//        }
+//        in.close();
+//        out.close();
+//    }
+
+    public boolean rename(File from, File to) {
+        if(from.exists()) {
+            return from.renameTo(to);
+        }
+        return false;
     }
 }

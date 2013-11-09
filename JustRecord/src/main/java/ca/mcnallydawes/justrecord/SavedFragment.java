@@ -189,7 +189,7 @@ public class SavedFragment extends Fragment {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 stopPlayback();
-                mAdapter.showPlayingItem(-1);
+                mAdapter.initActiveItem();
             }
         });
 
@@ -256,6 +256,7 @@ public class SavedFragment extends Fragment {
         }
 
         sortByDateModified();
+        mAdapter.initActiveItem();
         mAdapter.notifyDataSetChanged();
     }
 

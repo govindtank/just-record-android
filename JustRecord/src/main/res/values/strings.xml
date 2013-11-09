@@ -15,6 +15,7 @@
     <string name="record_button_cancel">CANCEL</string>
     <string name="record_button_finish">FINISH</string>
     <string name="record_button_record">RECORD</string>
+    <string name="record_button_continue">CONTINUE</string>
 
     <!-- Saved Screen Strings -->
     <string name="saved_button_filter_date_title">DATE</string>
