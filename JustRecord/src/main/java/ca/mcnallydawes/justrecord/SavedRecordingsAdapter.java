@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -20,26 +21,39 @@ import java.util.Date;
 /**
  * Created by H100173 on 11/7/13.
  */
-public class SavedRecordingsAdapter extends ArrayAdapter<File> {
+public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
 
     public static class ViewHolder {
         public TextView nameTV;
         public TextView dateTV;
         public TextView durationTV;
         public TextView sizeTV;
+        public ImageView thumbnailIV;
+    }
+
+    public class ActiveItem {
+        public int index;
+        public boolean isPlaying;
+
+        public ActiveItem() {
+            index = -1;
+            isPlaying = false;
+        }
     }
 
     private Activity mContext;
     private int mLayoutResourceId;
-    private ArrayList<File> mData;
+    private ArrayList<Recording> mData;
     private SparseBooleanArray mSelectedItemsIds;
+    private ActiveItem mActiveItem;
 
-    public SavedRecordingsAdapter(Activity context, int layoutResourceId, ArrayList<File> objects) {
+    public SavedRecordingsAdapter(Activity context, int layoutResourceId, ArrayList<Recording> objects) {
         super(context, layoutResourceId, objects);
         mContext = context;
         mLayoutResourceId = layoutResourceId;
         mData = objects;
         mSelectedItemsIds = new SparseBooleanArray();
+        mActiveItem = new ActiveItem();
     }
 
     @Override
@@ -50,6 +64,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<File> {
             LayoutInflater inflater = mContext.getLayoutInflater();
             convertView = inflater.inflate(mLayoutResourceId, parent, false);
             holder = new ViewHolder();
+            holder.thumbnailIV = (ImageView) convertView.findViewById(R.id.saved_list_item_imageView_thumbnail);
             holder.nameTV = (TextView) convertView.findViewById(R.id.saved_list_item_textView_name);
             holder.dateTV = (TextView) convertView.findViewById(R.id.saved_list_item_textView_date);
             holder.durationTV = (TextView) convertView.findViewById(R.id.saved_list_item_textView_duration);
@@ -59,16 +74,22 @@ public class SavedRecordingsAdapter extends ArrayAdapter<File> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.nameTV.setText(mData.get(position).getName());
-        holder.dateTV.setText(new SimpleDateFormat("dd/MM/yyyy, hh:mm aa").format(new Date(mData.get(position).lastModified())));
-        holder.durationTV.setText("");
-        holder.sizeTV.setText(getFileSize(mData.get(position).length()));
+        Recording recording = mData.get(position);
 
-        //Load the length of the recording in an AsyncTask, seems to take some time
-        UIUtils.FileDurationWorkerTask fileDurationWorkerTask = new UIUtils.FileDurationWorkerTask(holder.durationTV, mContext);
-        fileDurationWorkerTask.execute(mData.get(position));
+        holder.nameTV.setText(recording.getName());
+        holder.dateTV.setText(recording.getDateModifiedString());
+        holder.durationTV.setText(recording.getDurationString());
+        holder.sizeTV.setText(recording.getSizeString());
 
         convertView.setBackgroundColor(mSelectedItemsIds.get(position) ? mContext.getResources().getColor(R.color.holo_red_dark) : Color.TRANSPARENT);
+
+        if(position == mActiveItem.index) {
+            UIUtils.BitmapWorkerTask bitmapWorkerTask = new UIUtils.BitmapWorkerTask(holder.thumbnailIV, mContext);
+            if(mActiveItem.isPlaying) bitmapWorkerTask.execute(R.drawable.ic_action_pause);
+            else bitmapWorkerTask.execute(R.drawable.ic_action_play);
+        } else {
+            holder.thumbnailIV.setImageDrawable(null);
+        }
 
         return convertView;
     }
@@ -107,6 +128,18 @@ public class SavedRecordingsAdapter extends ArrayAdapter<File> {
         String secondsString = seconds > 9 ? Integer.toString(seconds) : "0" + Integer.toString(seconds);
 
         return minuteString + ":" + secondsString;
+    }
+
+    public void showPlayingItem(int index) {
+        mActiveItem.index = index;
+        mActiveItem.isPlaying = true;
+        notifyDataSetChanged();
+    }
+
+    public void showPausedItem(int index) {
+        mActiveItem.index = index;
+        mActiveItem.isPlaying = false;
+        notifyDataSetChanged();
     }
 
     public void toggleSelection(int position) {

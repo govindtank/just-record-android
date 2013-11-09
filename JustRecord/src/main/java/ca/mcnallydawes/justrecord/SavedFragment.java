@@ -43,7 +43,7 @@ public class SavedFragment extends Fragment {
     private List<Button> mFilterButtons;
     private ListView mListView;
     private SavedRecordingsAdapter mAdapter;
-    private ArrayList<File> mData;
+    private ArrayList<Recording> mData;
     private MediaPlayer mPlayer;
     private MediaPlayerState mPlayerState;
     private int mClickedItem = -1;
@@ -107,7 +107,12 @@ public class SavedFragment extends Fragment {
         mFilterButtons.get(0).setSelected(true);
 
         mListView = (ListView) rootView.findViewById(R.id.saved_listView_list);
-        mData = getListFiles(MyConstants.APP_DIRECTORY_FILE());
+
+        mData = new ArrayList<Recording>();
+        ArrayList<File> files = getListFiles(MyConstants.APP_DIRECTORY_FILE());
+        for(File file : files) {
+            mData.add(new Recording(file.getName(), file.getAbsolutePath(), file.length(), file.lastModified()));
+        }
 
         sortByDateModified();
 
@@ -121,16 +126,20 @@ public class SavedFragment extends Fragment {
                 if(mActionMode == null) {
                     if(mClickedItem == i && mPlayerState == MediaPlayerState.PLAYING) {
                         pausePlayback();
+                        mAdapter.showPausedItem(i);
                         Log.d("playback", "PAUSE FROM PLAY");
                     } else if(mClickedItem == i && mPlayerState == MediaPlayerState.PAUSED) {
                         resumePlayback();
+                        mAdapter.showPlayingItem(i);
                         Log.d("playback", "PLAY FROM PAUSE");
                     } else if(mClickedItem == i && mPlayerState == MediaPlayerState.STOPPED) {
-                        playFile(mData.get(i));
+                        playFile(new File(mData.get(i).getAbsolutePath()));
+                        mAdapter.showPlayingItem(i);
                         Log.d("playback", "PLAY FROM STOPPED");
                     } else if(mClickedItem != i) {
                         stopPlayback();
-                        playFile(mData.get(i));
+                        playFile(new File(mData.get(i).getAbsolutePath()));
+                        mAdapter.showPlayingItem(i);
                         Log.d("playback", "PLAY NEW");
                     }
                     mClickedItem = i;
@@ -180,6 +189,7 @@ public class SavedFragment extends Fragment {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 stopPlayback();
+                mAdapter.showPlayingItem(-1);
             }
         });
 
@@ -242,7 +252,7 @@ public class SavedFragment extends Fragment {
         ArrayList<File> fileNames = getListFiles(MyConstants.APP_DIRECTORY_FILE());
         for(File file : fileNames) {
 //            if(!file.getName().contains("ca.mcnallydawes.justrecord"))
-                mData.add(file);
+                mData.add(new Recording(file.getName(), file.getAbsolutePath(), file.length(), file.lastModified()));
         }
 
         sortByDateModified();
@@ -250,62 +260,46 @@ public class SavedFragment extends Fragment {
     }
 
     private void sortByDateModified() {
-        Collections.sort(mData, new Comparator<File>() {
-            public int compare(File a, File b) {
-                if(a.lastModified() > b.lastModified()) return 1;
-                else if(a.lastModified() < b.lastModified()) return -1;
+        Collections.sort(mData, new Comparator<Recording>() {
+            public int compare(Recording a, Recording b) {
+                if(a.getDateModified() > b.getDateModified()) return -1;
+                else if(a.getDateModified() < b.getDateModified()) return 1;
                 else return 0;
             }
         });
     }
 
     private void sortByName() {
-        Collections.sort(mData, new Comparator<File>() {
-            public int compare(File a, File b) {
+        Collections.sort(mData, new Comparator<Recording>() {
+            public int compare(Recording a, Recording b) {
                 return a.getName().compareTo(b.getName());
             }
         });
     }
 
     private void sortByFileType() {
-        Collections.sort(mData, new Comparator<File>() {
-            public int compare(File a, File b) {
-                return a.getName().split("\\.")[1].compareTo(b.getName().split("\\.")[1]);
+        Collections.sort(mData, new Comparator<Recording>() {
+            public int compare(Recording a, Recording b) {
+                return a.getName().compareTo(b.getName());
             }
         });
     }
 
     private void sortByLength() {
-        Collections.sort(mData, new Comparator<File>() {
-            public int compare(File a, File b) {
-                long aLength = getAudioFileDuration(a);
-                long bLength = getAudioFileDuration(b);
-                if(aLength > bLength) return 1;
-                else if(aLength < bLength) return -1;
+        Collections.sort(mData, new Comparator<Recording>() {
+            public int compare(Recording a, Recording b) {
+                if(a.getDuration() > b.getDuration()) return 1;
+                else if(a.getDuration() < b.getDuration()) return -1;
                 else return 0;
             }
         });
     }
 
-    private long getAudioFileDuration(File file) {
-        MediaPlayer player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            player.setDataSource(file.getPath());
-            player.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return player.getDuration();
-    }
-
     private void sortBySize() {
-        Collections.sort(mData, new Comparator<File>() {
-            public int compare(File a, File b) {
-                if(a.length() > b.length()) return 1;
-                else if(a.length() < b.length()) return -1;
+        Collections.sort(mData, new Comparator<Recording>() {
+            public int compare(Recording a, Recording b) {
+                if(a.getSize() > b.getSize()) return -1;
+                else if(a.getSize() < b.getSize()) return 1;
                 else return 0;
             }
         });
@@ -354,7 +348,7 @@ public class SavedFragment extends Fragment {
                     if(mActionMode != null) mActionMode.finish();
                     return true;
                 case R.id.saved_action_share:
-                    Uri uri = Uri.parse(mData.get(selectedPosition).getPath());
+                    Uri uri = Uri.parse(mData.get(selectedPosition).getAbsolutePath());
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.setType("audio/*");
                     share.putExtra(Intent.EXTRA_STREAM, uri);
@@ -377,7 +371,7 @@ public class SavedFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     for (int index : finalSelectedPositions) {
-                                        mData.get(index).delete();
+                                        new File(mData.get(index).getAbsolutePath()).delete();
                                     }
                                     refreshListView();
                                     mAdapter.removeSelection();

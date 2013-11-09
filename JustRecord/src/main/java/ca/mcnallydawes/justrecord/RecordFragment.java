@@ -188,7 +188,7 @@ public class RecordFragment extends Fragment {
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.stop();
         mPauseTime = 0;
-        mPartialRecordingNumber = 0;
+//        mPartialRecordingNumber = 0;
 
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
