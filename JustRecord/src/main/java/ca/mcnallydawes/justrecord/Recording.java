@@ -21,7 +21,7 @@ public class Recording {
     private String mDateModifiedString;
 
     public Recording(String name, String path, long size, long dateModified) {
-        mName = name.split("\\.")[0];
+        mName = name.replace(".mp4", "").replace(MyConstants.APP_IDENTIFIER + ".", "");
         mAbsolutePath = path;
         setFileSizes(size);
         setFileDurations(path);

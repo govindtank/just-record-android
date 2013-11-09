@@ -88,7 +88,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
             if(mActiveItem.isPlaying) bitmapWorkerTask.execute(R.drawable.ic_action_pause);
             else bitmapWorkerTask.execute(R.drawable.ic_action_play);
         } else {
-            holder.thumbnailIV.setImageDrawable(null);
+            holder.thumbnailIV.setImageResource(R.drawable.saved_ic_record);
         }
 
         return convertView;
