@@ -180,14 +180,15 @@ public class RecordFragment extends Fragment {
         /*
         Recording was cancelled so we can safely delete it. But we should be asking first.
          */
-        new File(MyConstants.APP_DIRECTORY_STRING + "/" + PARTIAL_RECORDING_NAME + getRecordingString(mPartialRecordingNumber) + ".mp4").delete();
+        ArrayList<File> allRecordings = getListFiles(MyConstants.APP_DIRECTORY_FILE());
+        for(File file : allRecordings) {
+            if(file.getName().contains(MyConstants.APP_IDENTIFIER)) file.delete();
+        }
 
         mPauseTime = 0;
         mChronometerRunning = false;
         mRecordButton.setSelected(mChronometerRunning);
         mPartialRecordingNumber = 0;
-
-        mRecordButton.setText(R.string.record_button_record);
         setRecordButtonVisible(true);
 
         Toast.makeText(getActivity(), "Ask if certain here.", Toast.LENGTH_SHORT).show();
