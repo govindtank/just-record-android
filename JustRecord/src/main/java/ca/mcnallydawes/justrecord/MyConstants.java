@@ -16,4 +16,7 @@ public class MyConstants {
     public static String APP_IDENTIFIER = "ca.mcnallydawes.justrecord";
     public static String EDIT_ACTIVITY_FILE_PATH = APP_IDENTIFIER + ".pathToEditFile";
     public static String EDIT_ACTIVITY_BUNDLE = APP_IDENTIFIER + ".EditActivity.Bundle";
+
+    public static String SERVICE_RECORDING_PATH = APP_IDENTIFIER + ".pathToRecordFile";
+    public static String SERVICE_SAVED_PATH = APP_IDENTIFIER + ".pathToSavedFile";
 }

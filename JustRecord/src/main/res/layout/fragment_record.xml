@@ -22,6 +22,7 @@
             android:text="@string/record_textView_timer_initial"
             android:textSize="40sp"
             android:textColor="@android:color/white"/>
+
     </RelativeLayout>
     <LinearLayout
         android:layout_height="50dp"
