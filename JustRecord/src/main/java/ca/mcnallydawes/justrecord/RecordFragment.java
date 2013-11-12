@@ -34,6 +34,7 @@ public class RecordFragment extends Fragment {
     }
 
     private static final String RECORD_PREFERENCES = "recordPreferences";
+    private static final String RECORD_FIRST = "recordFirstTime";
     private static final String NEXT_RECORDING_NUMBER = "nextRecordingNumber";
     private static final String DEFAULT_RECORDING_NAME = "JustARecording_";
     private static final String PARTIAL_RECORDING_NAME = "ca.mcnallydawes.justrecord.JustAPartialRecording_";
@@ -122,6 +123,11 @@ public class RecordFragment extends Fragment {
         mFinishLayout = (RelativeLayout) rootView.findViewById(R.id.record_layout_button_finish);
 
         mSpace0 = (Space) rootView.findViewById(R.id.record_space_0);
+
+        if(getFirstTimeRecord()) {
+            Toast.makeText(getActivity(), "You can start, resume, and pause\\na recording with the big red button.", Toast.LENGTH_LONG).show();
+            setFirstTimeRecord(false);
+        }
 
         return rootView;
     }
@@ -272,6 +278,17 @@ public class RecordFragment extends Fragment {
     private void setNextRecordingNumber(int nextRecordingNumber) {
         SharedPreferences.Editor edit = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE).edit();
         edit.putInt(NEXT_RECORDING_NUMBER, nextRecordingNumber);
+        edit.commit();
+    }
+
+    private boolean getFirstTimeRecord() {
+        SharedPreferences preferences = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE);
+        return preferences.getBoolean(RECORD_FIRST, true);
+    }
+
+    private void setFirstTimeRecord(boolean firstTime) {
+        SharedPreferences.Editor edit = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+        edit.putBoolean(RECORD_FIRST, firstTime);
         edit.commit();
     }
 

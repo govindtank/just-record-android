@@ -27,6 +27,6 @@
     <string name="saved_action_edit">Edit</string>
     <string name="saved_action_share">Share</string>
     <string name="saved_action_settings">Settings</string>
-    <string name="saved_textView_info">No recordings.\nPress the record button to start.</string>
+    <string name="saved_textView_info">Tap to play a recording.\nLong press for more options.\n\n\nNo recordings.\nPress the record button to start.</string>
 
 </resources>
