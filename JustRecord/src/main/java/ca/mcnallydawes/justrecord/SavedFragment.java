@@ -22,6 +22,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public class SavedFragment extends Fragment {
 
     private List<Button> mFilterButtons;
     private ListView mListView;
+    private TextView mInfoTV;
     private SavedRecordingsAdapter mAdapter;
     private ArrayList<Recording> mData;
     private MediaPlayer mPlayer;
@@ -108,6 +110,8 @@ public class SavedFragment extends Fragment {
 
         mListView = (ListView) rootView.findViewById(R.id.saved_listView_list);
 
+        mInfoTV = (TextView) rootView.findViewById(R.id.saved_textView_info);
+
         mData = new ArrayList<Recording>();
         ArrayList<File> files = getListFiles(MyConstants.APP_DIRECTORY_FILE());
         for(File file : files) {
@@ -117,6 +121,9 @@ public class SavedFragment extends Fragment {
         sortByDateModified();
 
         mAdapter = new SavedRecordingsAdapter(getActivity(), R.layout.list_item_saved, mData);
+
+        mInfoTV.setVisibility(mData.size() > 0 ? View.GONE : View.VISIBLE);
+        mListView.setVisibility(mData.size() > 0 ? View.VISIBLE : View.GONE);
 
         mListView.setAdapter(mAdapter);
 
@@ -254,6 +261,9 @@ public class SavedFragment extends Fragment {
 //            if(!file.getName().contains("ca.mcnallydawes.justrecord"))
                 mData.add(new Recording(file.getName(), file.getAbsolutePath(), file.length(), file.lastModified()));
         }
+
+        mInfoTV.setVisibility(mData.size() > 0 ? View.GONE : View.VISIBLE);
+        mListView.setVisibility(mData.size() > 0 ? View.VISIBLE : View.GONE);
 
         sortByDateModified();
         mAdapter.initActiveItem();

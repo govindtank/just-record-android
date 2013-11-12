@@ -15,6 +15,14 @@
             android:listSelector="@drawable/list_item_saved_selector"
             android:divider="@color/saved_button_background"
             android:dividerHeight="1dp"/>
+        <TextView android:id="@+id/saved_textView_info"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_centerInParent="true"
+            android:text="@string/saved_textView_info"
+            android:textColor="@android:color/white"
+            android:gravity="center_horizontal"/>
     </RelativeLayout>
     <LinearLayout
         android:layout_height="50dp"

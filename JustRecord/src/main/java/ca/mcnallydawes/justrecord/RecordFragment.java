@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.RelativeLayout;
 import android.widget.Space;
 import android.widget.Toast;
 
@@ -45,6 +46,11 @@ public class RecordFragment extends Fragment {
     private Button mRecordButtonAlt;
     private Button mCancelButton;
     private Button mFinishButton;
+
+    private RelativeLayout mRecordLayout;
+    private RelativeLayout mCancelLayout;
+    private RelativeLayout mFinishLayout;
+
     private Space mSpace0;
     private int mNextRecordingNumber;
     private int mPartialRecordingNumber;
@@ -110,6 +116,10 @@ public class RecordFragment extends Fragment {
                 finishRecording();
             }
         });
+
+        mRecordLayout = (RelativeLayout) rootView.findViewById(R.id.record_layout_button_record);
+        mCancelLayout = (RelativeLayout) rootView.findViewById(R.id.record_layout_button_cancel);
+        mFinishLayout = (RelativeLayout) rootView.findViewById(R.id.record_layout_button_finish);
 
         mSpace0 = (Space) rootView.findViewById(R.id.record_space_0);
 
@@ -239,10 +249,10 @@ public class RecordFragment extends Fragment {
     }
 
     private void setRecordButtonVisible(boolean visible) {
-        mRecordButtonAlt.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mRecordLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
 
-        mFinishButton.setVisibility(visible ? View.GONE : View.VISIBLE);
-        mCancelButton.setVisibility(visible ? View.GONE : View.VISIBLE);
+        mFinishLayout.setVisibility(visible ? View.GONE : View.VISIBLE);
+        mCancelLayout.setVisibility(visible ? View.GONE : View.VISIBLE);
         mSpace0.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 

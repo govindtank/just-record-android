@@ -48,6 +48,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         mData = objects;
         mSelectedItemsIds = new SparseBooleanArray();
         mActiveItem = new ActiveItem();
+        initActiveItem();
     }
 
     @Override

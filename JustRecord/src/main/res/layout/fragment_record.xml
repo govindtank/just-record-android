@@ -28,41 +28,82 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="@android:color/transparent">
-        <Button
-            android:id="@+id/record_button_record_alt"
+        <RelativeLayout android:id="@+id/record_layout_button_record"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/record_button_record_alt"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/saved_button_filter_selector"/>
+            <TextView android:id="@+id/record_textView_button_record"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/record_button_record"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="@android:color/white" />
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/saved_ic_record"
+                android:layout_toLeftOf="@id/record_textView_button_record"/>
+        </RelativeLayout>
+        <RelativeLayout android:id="@+id/record_layout_button_cancel"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/record_button_record"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:textColor="@android:color/white"
-            android:background="@drawable/saved_button_filter_selector"/>
-        <Button
-            android:id="@+id/record_button_cancel"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/record_button_cancel"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:textColor="@android:color/white"
-            android:background="@drawable/saved_button_filter_selector"
-            android:visibility="gone"/>
+            android:visibility="gone">
+            <Button
+                android:id="@+id/record_button_cancel"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/saved_button_filter_selector"/>
+            <TextView android:id="@+id/record_textView_button_cancel"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/record_button_cancel"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="@android:color/white" />
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_action_cancel"
+                android:layout_toLeftOf="@id/record_textView_button_cancel"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
         <Space android:id="@+id/record_space_0"
             android:layout_height="match_parent"
             android:layout_width="1dp"
             android:visibility="gone"/>
-        <Button
-            android:id="@+id/record_button_finish"
+        <RelativeLayout android:id="@+id/record_layout_button_finish"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/record_button_finish"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:textColor="@android:color/white"
-            android:background="@drawable/saved_button_filter_selector"
-            android:visibility="gone"/>
+            android:visibility="gone">
+            <Button
+                android:id="@+id/record_button_finish"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/saved_button_filter_selector"/>
+            <TextView android:id="@+id/record_textView_button_finish"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/record_button_finish"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="@android:color/white" />
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_action_accept"
+                android:layout_toLeftOf="@id/record_textView_button_finish"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
