@@ -4,25 +4,23 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,10 +45,15 @@ public class SavedFragment extends Fragment {
     private TextView mInfoTV;
     private SavedRecordingsAdapter mAdapter;
     private ArrayList<Recording> mData;
-    private MediaPlayer mPlayer;
+    private MediaPlayer mMediaPlayer;
     private MediaPlayerState mPlayerState;
     private int mClickedItem = -1;
     private ActionMode mActionMode;
+    private SeekBar mSeekBar;
+    private Handler mHandler = new Handler();
+    private Runnable mSeekBarRunnable;
+    private TextView mPlaybackTimeTV;
+    private TextView mPlaybackDurationTV;
 
     public static SavedFragment newInstance() {
         return new SavedFragment();
@@ -71,6 +74,46 @@ public class SavedFragment extends Fragment {
         mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_type));
         mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
 
+        mSeekBar = (SeekBar) rootView.findViewById(R.id.saved_seekBar);
+        mPlaybackTimeTV = (TextView) rootView.findViewById(R.id.saved_textView_playback_time);
+        mPlaybackDurationTV = (TextView) rootView.findViewById(R.id.saved_textView_playback_duration);
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mMediaPlayer != null && fromUser) {
+                    mMediaPlayer.seekTo(progress);
+                    mPlaybackTimeTV.setText(getTimeString(progress));
+                } else if(mMediaPlayer == null && fromUser) {
+                    mPlaybackTimeTV.setText(getTimeString(progress));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        mSeekBarRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(mMediaPlayer != null){
+                    int mCurrentPosition = mMediaPlayer.getCurrentPosition();
+                    mSeekBar.setProgress(mCurrentPosition);
+                    mPlaybackTimeTV.setText(getTimeString(mCurrentPosition));
+                }
+                mHandler.postDelayed(this, 100);
+            }
+        };
+
+        mHandler.postDelayed(mSeekBarRunnable, 100);
+
         for(int i = 0; i < mFilterButtons.size(); i++) {
             Button btn = mFilterButtons.get(i);
             final int index = i;
@@ -82,20 +125,16 @@ public class SavedFragment extends Fragment {
                         switch(index) {
                             case 0:
                                 sortByDateModified();
-                                mAdapter.notifyDataSetChanged();
                                 break;
                             case 1:
                                 sortByName();
-                                mAdapter.notifyDataSetChanged();
                                 break;
                             case 2:
     //                            sortByLength();
                                 sortByFileType();
-                                mAdapter.notifyDataSetChanged();
                                 break;
                             case 3:
                                 sortBySize();
-                                mAdapter.notifyDataSetChanged();
                                 break;
                             default:
                                 break;
@@ -119,9 +158,9 @@ public class SavedFragment extends Fragment {
             mData.add(new Recording(file.getName(), file.getAbsolutePath(), file.length(), file.lastModified()));
         }
 
-        sortByDateModified();
-
         mAdapter = new SavedRecordingsAdapter(getActivity(), R.layout.list_item_saved, mData);
+
+        sortByDateModified();
 
         mInfoTV.setVisibility(mData.size() > 0 ? View.GONE : View.VISIBLE);
         mListView.setVisibility(mData.size() > 0 ? View.VISIBLE : View.GONE);
@@ -135,20 +174,22 @@ public class SavedFragment extends Fragment {
                     if(mClickedItem == i && mPlayerState == MediaPlayerState.PLAYING) {
                         pausePlayback();
                         mAdapter.showPausedItem(i);
-                        Log.d("playback", "PAUSE FROM PLAY");
+//                        Log.d("playback", "PAUSE FROM PLAY");
                     } else if(mClickedItem == i && mPlayerState == MediaPlayerState.PAUSED) {
                         resumePlayback();
                         mAdapter.showPlayingItem(i);
-                        Log.d("playback", "PLAY FROM PAUSE");
+//                        Log.d("playback", "PLAY FROM PAUSE");
                     } else if(mClickedItem == i && mPlayerState == MediaPlayerState.STOPPED) {
-                        playFile(new File(mData.get(i).getAbsolutePath()));
+                        playFile(new File(mData.get(i).getAbsolutePath()), mSeekBar.getMax() - mSeekBar.getProgress() <= 100 ? 0 : mSeekBar.getProgress());
                         mAdapter.showPlayingItem(i);
-                        Log.d("playback", "PLAY FROM STOPPED");
+//                        Log.d("playback", "PLAY FROM STOPPED");
                     } else if(mClickedItem != i) {
                         stopPlayback();
-                        playFile(new File(mData.get(i).getAbsolutePath()));
+                        mSeekBar.setMax((int)mData.get(i).getDuration());
+                        playFile(new File(mData.get(i).getAbsolutePath()), 0);
                         mAdapter.showPlayingItem(i);
-                        Log.d("playback", "PLAY NEW");
+                        mPlaybackDurationTV.setText(mData.get(i).getDurationString());
+//                        Log.d("playback", "PLAY NEW");
                     }
                     mClickedItem = i;
                 } else {
@@ -190,38 +231,40 @@ public class SavedFragment extends Fragment {
         }
     }
 
-    private void playFile(File file) {
-        mPlayer = new MediaPlayer();
+    private void playFile(File file, int start) {
+        mMediaPlayer = new MediaPlayer();
 
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 stopPlayback();
-                mAdapter.initActiveItem();
+                mAdapter.showPausedItem(mClickedItem);
+                mAdapter.notifyDataSetChanged();
             }
         });
 
-        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         try {
-            mPlayer.setDataSource(file.getPath());
-            mPlayer.prepare();
+            mMediaPlayer.setDataSource(file.getPath());
+            mMediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mPlayer.start();
+        mMediaPlayer.seekTo(start);
+        mMediaPlayer.start();
         mPlayerState = MediaPlayerState.PLAYING;
     }
 
     private void pausePlayback() {
-        mPlayer.pause();
+        mMediaPlayer.pause();
         mPlayerState = MediaPlayerState.PAUSED;
     }
 
     private void resumePlayback() {
-        if(mPlayer != null) {
-            mPlayer.start();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.start();
             mPlayerState = MediaPlayerState.PLAYING;
         } else {
             mPlayerState = MediaPlayerState.STOPPED;
@@ -229,10 +272,10 @@ public class SavedFragment extends Fragment {
     }
 
     private void stopPlayback() {
-        if(mPlayer != null) {
-            mPlayer.stop();
-            mPlayer.release();
-            mPlayer = null;
+        if(mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
         mPlayerState = MediaPlayerState.STOPPED;
     }
@@ -272,49 +315,97 @@ public class SavedFragment extends Fragment {
     }
 
     private void sortByDateModified() {
+        Recording activeRecording = getActiveRecording();
+
         Collections.sort(mData, new Comparator<Recording>() {
             public int compare(Recording a, Recording b) {
-                if(a.getDateModified() > b.getDateModified()) return -1;
-                else if(a.getDateModified() < b.getDateModified()) return 1;
+                if (a.getDateModified() > b.getDateModified()) return -1;
+                else if (a.getDateModified() < b.getDateModified()) return 1;
                 else return 0;
             }
         });
+
+        if(activeRecording != null) updateActiveItem(activeRecording);
     }
 
     private void sortByName() {
+        Recording activeRecording = getActiveRecording();
+
         Collections.sort(mData, new Comparator<Recording>() {
             public int compare(Recording a, Recording b) {
                 return a.getName().compareTo(b.getName());
             }
         });
+
+        if(activeRecording != null) updateActiveItem(activeRecording);
     }
 
     private void sortByFileType() {
+        Recording activeRecording = getActiveRecording();
+
         Collections.sort(mData, new Comparator<Recording>() {
             public int compare(Recording a, Recording b) {
                 return a.getName().compareTo(b.getName());
             }
         });
+
+        if(activeRecording != null) updateActiveItem(activeRecording);
     }
 
     private void sortByLength() {
+        Recording activeRecording = getActiveRecording();
+
         Collections.sort(mData, new Comparator<Recording>() {
             public int compare(Recording a, Recording b) {
-                if(a.getDuration() > b.getDuration()) return 1;
-                else if(a.getDuration() < b.getDuration()) return -1;
+                if (a.getDuration() > b.getDuration()) return 1;
+                else if (a.getDuration() < b.getDuration()) return -1;
                 else return 0;
             }
         });
+
+        if(activeRecording != null) updateActiveItem(activeRecording);
     }
 
     private void sortBySize() {
+        Recording activeRecording = getActiveRecording();
+
         Collections.sort(mData, new Comparator<Recording>() {
             public int compare(Recording a, Recording b) {
-                if(a.getSize() > b.getSize()) return -1;
-                else if(a.getSize() < b.getSize()) return 1;
+                if (a.getSize() > b.getSize()) return -1;
+                else if (a.getSize() < b.getSize()) return 1;
                 else return 0;
             }
         });
+
+        if(activeRecording != null) updateActiveItem(activeRecording);
+    }
+
+    private Recording getActiveRecording() {
+        int activeIndex = mAdapter.getActiveItemIndex();
+        if(mAdapter.getActiveItemIndex() >= 0) return mData.get(activeIndex);
+        else return null;
+    }
+
+    private void updateActiveItem(Recording activeRecording) {
+        for(int i = 0; i < mData.size(); i++) {
+            Recording recording = mData.get(i);
+            if(recording == activeRecording) {
+                mAdapter.updateActiveItemIndex(i);
+                mClickedItem = i;
+                break;
+            }
+        }
+    }
+
+    private String getTimeString(long milliseconds) {
+        long seconds = milliseconds / 1000;
+        long minutes = seconds / 60;
+        seconds = seconds - (minutes * 60);
+
+        String minuteString = minutes > 9 ? Long.toString(minutes) : "0" + Long.toString(minutes);
+        String secondsString = seconds > 9 ? Long.toString(seconds) : "0" + Long.toString(seconds);
+
+        return minuteString + ":" + secondsString;
     }
 
     private class ActionModeCallback implements ActionMode.Callback {

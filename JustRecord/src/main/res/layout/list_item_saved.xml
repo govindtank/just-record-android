@@ -29,7 +29,8 @@
     <LinearLayout
         android:layout_height="42dp"
         android:layout_width="42dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
         <TextView android:id="@+id/saved_list_item_textView_duration"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

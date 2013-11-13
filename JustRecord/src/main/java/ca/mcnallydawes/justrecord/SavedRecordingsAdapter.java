@@ -106,6 +106,15 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         notifyDataSetChanged();
     }
 
+    public int getActiveItemIndex() {
+        return mActiveItem.index;
+    }
+
+    public void updateActiveItemIndex(int index) {
+        mActiveItem.index = index;
+        notifyDataSetChanged();
+    }
+
     public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
