@@ -3,6 +3,10 @@
     <color name="saved_button_background">#ff424242</color>\
     <color name="holo_red_light">#FF4444</color>
     <color name="holo_red_dark">#CC0000</color>
-    <color name="transparent_holo_red_light">#7AFF4444</color>
-    <color name="transparent_holo_red_dark">#7ACC0000</color>
+    <color name="semi_transparent_holo_red_light">#FF4444</color>
+    <color name="semi_transparent_holo_red_dark">#C8CC0000</color>
+    <color name="half_transparent_holo_red_light">#7AFF4444</color>
+    <color name="half_transparent_holo_red_dark">#7ACC0000</color>
+    <color name="transparent_holo_red_light">#4AFF4444</color>
+    <color name="transparent_holo_red_dark">#4ACC0000</color>
 </resources>

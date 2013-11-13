@@ -76,7 +76,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         holder.durationTV.setText(recording.getDurationString());
         holder.sizeTV.setText(recording.getSizeString());
 
-        convertView.setBackgroundColor(mSelectedItemsIds.get(position) ? mContext.getResources().getColor(R.color.transparent_holo_red_dark) : Color.TRANSPARENT);
+        convertView.setBackgroundColor(mSelectedItemsIds.get(position) ? mContext.getResources().getColor(R.color.half_transparent_holo_red_dark) : Color.TRANSPARENT);
 
         if(position == mActiveItem.index) {
             UIUtils.BitmapWorkerTask bitmapWorkerTask = new UIUtils.BitmapWorkerTask(holder.thumbnailIV, mContext);
@@ -112,7 +112,6 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
 
     public void updateActiveItemIndex(int index) {
         mActiveItem.index = index;
-        notifyDataSetChanged();
     }
 
     public void toggleSelection(int position) {

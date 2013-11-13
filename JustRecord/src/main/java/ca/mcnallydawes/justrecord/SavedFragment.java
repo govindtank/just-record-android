@@ -139,6 +139,7 @@ public class SavedFragment extends Fragment {
                             default:
                                 break;
                         }
+                        mAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getActivity(), "Can't sort while selecting", Toast.LENGTH_SHORT).show();
                     }
@@ -326,6 +327,7 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void sortByName() {
@@ -338,6 +340,7 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void sortByFileType() {
@@ -350,6 +353,7 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void sortByLength() {
@@ -364,6 +368,7 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void sortBySize() {
@@ -378,11 +383,12 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
+//        mAdapter.notifyDataSetChanged();
     }
 
     private Recording getActiveRecording() {
         int activeIndex = mAdapter.getActiveItemIndex();
-        if(mAdapter.getActiveItemIndex() >= 0) return mData.get(activeIndex);
+        if(activeIndex >= 0) return mData.get(activeIndex);
         else return null;
     }
 
