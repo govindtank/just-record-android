@@ -36,21 +36,20 @@
             android:layout_height="wrap_content"
             android:text="@string/record_textView_timer_initial"
             android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"/>
-        <Space
-            android:layout_width="5dp"
-            android:layout_height="match_parent"/>
+            android:textSize="12sp"
+            android:visibility="gone"/>
         <SeekBar android:id="@+id/saved_seekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="@style/CustomSeekBar"/>
+            style="@style/MySeekBar"/>
         <TextView android:id="@+id/saved_textView_playback_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/record_textView_timer_initial"
             android:textColor="@android:color/white"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            android:visibility="gone"/>
     </LinearLayout>
     <!--<Space-->
         <!--android:layout_width="match_parent"-->

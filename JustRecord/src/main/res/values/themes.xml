@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- the theme applied to the application or activity -->
-    <style name="CustomActionBarTheme"
+    <style name="MyActionBarTheme"
         parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:actionBarTabStyle">@style/MyActionBarTabs</item>
-        <!--<item name="android:actionModeStyle">@style/CabTheme</item>-->
+        <item name="android:actionBarItemBackground">@drawable/list_item_saved_selector</item>
+        <item name="android:actionModeBackground">@drawable/action_mode_background</item>
     </style>
 
-    <!-- ActionBar tabs styles -->
     <style name="MyActionBarTabs"
         parent="android:Widget.Holo.ActionBar.TabView">
-        <!-- tab indicator -->
         <item name="android:background">@drawable/tab_item_selector</item>
         <item name="android:tabStripEnabled">true</item>
-    </style>
-
-    <style name="CabTheme" parent="android:Widget.Holo.ActionMode">
-        <item name="android:actionModeCloseDrawable">@drawable/ic_action_cancel</item>
-        <item name="android:actionModeBackground">@color/holo_red_light</item>
-        <item name="android:actionModeSplitBackground">@color/holo_red_dark</item>
     </style>
 </resources>
