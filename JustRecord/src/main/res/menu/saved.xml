@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/saved_action_edit"
-        android:title="@string/saved_action_edit"
-        android:icon="@drawable/ic_action_edit"
+    <item android:id="@+id/saved_action_sort"
+        android:title="Sort"
+        android:icon="@drawable/ic_action_sort_by_size"
+        android:showAsAction="always">
+        <menu>
+            <item android:id="@+id/saved_sort_date"
+                android:title="@string/saved_action_sort_date"/>
+            <item android:id="@+id/saved_sort_name"
+                android:title="@string/saved_action_sort_name"/>
+            <item android:id="@+id/saved_sort_size"
+                android:title="@string/saved_action_sort_size"/>
+            <item android:id="@+id/saved_sort_type"
+                android:title="@string/saved_action_sort_type"/>
+        </menu>
+    </item>
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="always"/>
-    <item android:id="@+id/saved_action_share"
-        android:title="@string/saved_action_share"
-        android:icon="@drawable/ic_action_share"
-        android:orderInCategory="100"
-        android:showAsAction="always"/>
-    <item android:id="@+id/saved_action_delete"
-        android:title="@string/saved_action_delete"
-        android:icon="@drawable/ic_action_discard"
-        android:orderInCategory="100"
-        android:showAsAction="always"/>
+        android:showAsAction="never" />
 </menu>

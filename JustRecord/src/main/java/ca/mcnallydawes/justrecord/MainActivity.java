@@ -30,6 +30,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    private RecordFragment mRecordFragment;
+    private SavedFragment mSavedFragment;
+    private AboutFragment mAboutFramgent;
+
+    private boolean onSavedSreen;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -66,7 +72,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
                 if(state == ViewPager.SCROLL_STATE_IDLE && mViewPager.getCurrentItem() != 1) {
-                    ((SavedFragment) mSectionsPagerAdapter.getFragment(1)).finishActionMode();
+                    if(onSavedSreen == true) {
+                        onSavedSreen = false;
+                        invalidateOptionsMenu();
+                    }
+                    mSavedFragment.finishActionMode();
+                } else if (state == ViewPager.SCROLL_STATE_IDLE && mViewPager.getCurrentItem() == 1) {
+                    onSavedSreen = true;
+                    invalidateOptionsMenu();
                 }
             }
         });
@@ -82,6 +95,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        mRecordFragment = (RecordFragment) mSectionsPagerAdapter.getFragment(0);
+        mSavedFragment = (SavedFragment) mSectionsPagerAdapter.getFragment(1);
+        mAboutFramgent = (AboutFragment) mSectionsPagerAdapter.getFragment(2);
+
+        onSavedSreen = false;
     }
 
 
@@ -93,6 +112,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortItem = menu.findItem(R.id.saved_action_sort);
+        sortItem.setVisible(onSavedSreen);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -100,6 +126,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Rec
         switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+            case R.id.saved_sort_date:
+                mSavedFragment.sortByDateModified();
+                return true;
+            case R.id.saved_sort_name:
+                mSavedFragment.sortByName();
+                return true;
+            case R.id.saved_sort_size:
+                mSavedFragment.sortBySize();
+                return true;
+            case R.id.saved_sort_type:
+                mSavedFragment.sortByFileType();
                 return true;
         }
         return super.onOptionsItemSelected(item);

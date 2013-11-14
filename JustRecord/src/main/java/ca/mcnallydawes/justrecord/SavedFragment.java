@@ -9,7 +9,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -40,7 +39,7 @@ public class SavedFragment extends Fragment {
         STOPPED, PLAYING, PAUSED
     }
 
-    private List<Button> mFilterButtons;
+//    private List<Button> mFilterButtons;
     private ListView mListView;
     private TextView mInfoTV;
     private SavedRecordingsAdapter mAdapter;
@@ -67,12 +66,12 @@ public class SavedFragment extends Fragment {
 
         mPlayerState = MediaPlayerState.STOPPED;
 
-        mFilterButtons = new ArrayList<Button>();
-
-        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_date));
-        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_name));
-        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_type));
-        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
+//        mFilterButtons = new ArrayList<Button>();
+//
+//        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_date));
+//        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_name));
+//        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_type));
+//        mFilterButtons.add((Button) rootView.findViewById(R.id.saved_button_filter_size));
 
         mSeekBar = (SeekBar) rootView.findViewById(R.id.saved_seekBar);
         mPlaybackTimeTV = (TextView) rootView.findViewById(R.id.saved_textView_playback_time);
@@ -114,40 +113,40 @@ public class SavedFragment extends Fragment {
 
         mHandler.postDelayed(mSeekBarRunnable, 100);
 
-        for(int i = 0; i < mFilterButtons.size(); i++) {
-            Button btn = mFilterButtons.get(i);
-            final int index = i;
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(mActionMode == null) {
-                        savedFilterButtonTap(view);
-                        switch(index) {
-                            case 0:
-                                sortByDateModified();
-                                break;
-                            case 1:
-                                sortByName();
-                                break;
-                            case 2:
-    //                            sortByLength();
-                                sortByFileType();
-                                break;
-                            case 3:
-                                sortBySize();
-                                break;
-                            default:
-                                break;
-                        }
-                        mAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Can't sort while selecting", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
-
-        mFilterButtons.get(0).setSelected(true);
+//        for(int i = 0; i < mFilterButtons.size(); i++) {
+//            Button btn = mFilterButtons.get(i);
+//            final int index = i;
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if(mActionMode == null) {
+//                        savedFilterButtonTap(view);
+//                        switch(index) {
+//                            case 0:
+//                                sortByDateModified();
+//                                break;
+//                            case 1:
+//                                sortByName();
+//                                break;
+//                            case 2:
+//    //                            sortByLength();
+//                                sortByFileType();
+//                                break;
+//                            case 3:
+//                                sortBySize();
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                        mAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Can't sort while selecting", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            });
+//        }
+//
+//        mFilterButtons.get(0).setSelected(true);
 
         mListView = (ListView) rootView.findViewById(R.id.saved_listView_list);
 
@@ -281,12 +280,12 @@ public class SavedFragment extends Fragment {
         mPlayerState = MediaPlayerState.STOPPED;
     }
 
-    private void savedFilterButtonTap (View btn) {
-        for(Button item : mFilterButtons) {
-            item.setSelected(false);
-        }
-        btn.setSelected(true);
-    }
+//    private void savedFilterButtonTap (View btn) {
+//        for(Button item : mFilterButtons) {
+//            item.setSelected(false);
+//        }
+//        btn.setSelected(true);
+//    }
 
     private ArrayList<File> getListFiles(File parentDir) {
         ArrayList<File> inFiles = new ArrayList<File>();
@@ -315,7 +314,7 @@ public class SavedFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void sortByDateModified() {
+    public void sortByDateModified() {
         Recording activeRecording = getActiveRecording();
 
         Collections.sort(mData, new Comparator<Recording>() {
@@ -327,10 +326,10 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
-    private void sortByName() {
+    public void sortByName() {
         Recording activeRecording = getActiveRecording();
 
         Collections.sort(mData, new Comparator<Recording>() {
@@ -340,10 +339,10 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
-    private void sortByFileType() {
+    public void sortByFileType() {
         Recording activeRecording = getActiveRecording();
 
         Collections.sort(mData, new Comparator<Recording>() {
@@ -353,10 +352,10 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
-    private void sortByLength() {
+    public void sortByLength() {
         Recording activeRecording = getActiveRecording();
 
         Collections.sort(mData, new Comparator<Recording>() {
@@ -368,10 +367,10 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
-    private void sortBySize() {
+    public void sortBySize() {
         Recording activeRecording = getActiveRecording();
 
         Collections.sort(mData, new Comparator<Recording>() {
@@ -383,7 +382,7 @@ public class SavedFragment extends Fragment {
         });
 
         if(activeRecording != null) updateActiveItem(activeRecording);
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     private Recording getActiveRecording() {
@@ -417,7 +416,7 @@ public class SavedFragment extends Fragment {
     private class ActionModeCallback implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            actionMode.getMenuInflater().inflate(R.menu.saved, menu);
+            actionMode.getMenuInflater().inflate(R.menu.saved_action_mode, menu);
             return true;
         }
 
