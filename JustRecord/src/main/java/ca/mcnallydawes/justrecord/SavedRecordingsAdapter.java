@@ -1,6 +1,7 @@
 package ca.mcnallydawes.justrecord;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
     private ArrayList<Recording> mData;
     private SparseBooleanArray mSelectedItemsIds;
     private ActiveItem mActiveItem;
+    private boolean mFirstRun;
 
     public SavedRecordingsAdapter(Activity context, int layoutResourceId, ArrayList<Recording> objects) {
         super(context, layoutResourceId, objects);
@@ -49,6 +51,7 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
         mSelectedItemsIds = new SparseBooleanArray();
         mActiveItem = new ActiveItem();
         initActiveItem();
+        mFirstRun = getFirstTimeRun();
     }
 
     @Override
@@ -138,5 +141,16 @@ public class SavedRecordingsAdapter extends ArrayAdapter<Recording> {
 
     public SparseBooleanArray getSelectedIds() {
         return mSelectedItemsIds;
+    }
+
+    private boolean getFirstTimeRun() {
+        SharedPreferences preferences = mContext.getSharedPreferences(MyConstants.APP_PREFERENCES, mContext.MODE_PRIVATE);
+        return preferences.getBoolean(MyConstants.FIRST_RUN, true);
+    }
+
+    private void setFirstTimeRun(boolean firstTime) {
+        SharedPreferences.Editor edit = mContext.getSharedPreferences(MyConstants.APP_PREFERENCES, mContext.MODE_PRIVATE).edit();
+        edit.putBoolean(MyConstants.FIRST_RUN, firstTime);
+        edit.commit();
     }
 }

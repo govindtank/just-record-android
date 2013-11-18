@@ -19,4 +19,7 @@ public class MyConstants {
 
     public static String SERVICE_RECORDING_PATH = APP_IDENTIFIER + ".pathToRecordFile";
     public static String SERVICE_SAVED_PATH = APP_IDENTIFIER + ".pathToSavedFile";
+
+    public static String APP_PREFERENCES = APP_IDENTIFIER + ".sharedAppPreferences";
+    public static String FIRST_RUN = APP_IDENTIFIER + ".appFirstRun";
 }

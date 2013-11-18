@@ -33,7 +33,6 @@ public class RecordFragment extends Fragment {
         public void onRecordingSavedListener();
     }
 
-    private static final String RECORD_PREFERENCES = "recordPreferences";
     private static final String RECORD_FIRST = "recordFirstTime";
     private static final String NEXT_RECORDING_NUMBER = "nextRecordingNumber";
     private static final String DEFAULT_RECORDING_NAME = "JustARecording_";
@@ -271,23 +270,23 @@ public class RecordFragment extends Fragment {
     }
 
     private int getNextRecordingNumber() {
-        SharedPreferences preferences = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences(MyConstants.APP_PREFERENCES, getActivity().MODE_PRIVATE);
         return preferences.getInt(NEXT_RECORDING_NUMBER, 0);
     }
 
     private void setNextRecordingNumber(int nextRecordingNumber) {
-        SharedPreferences.Editor edit = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+        SharedPreferences.Editor edit = getActivity().getSharedPreferences(MyConstants.APP_PREFERENCES, getActivity().MODE_PRIVATE).edit();
         edit.putInt(NEXT_RECORDING_NUMBER, nextRecordingNumber);
         edit.commit();
     }
 
     private boolean getFirstTimeRecord() {
-        SharedPreferences preferences = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences(MyConstants.APP_PREFERENCES, getActivity().MODE_PRIVATE);
         return preferences.getBoolean(RECORD_FIRST, true);
     }
 
     private void setFirstTimeRecord(boolean firstTime) {
-        SharedPreferences.Editor edit = getActivity().getSharedPreferences(RECORD_PREFERENCES, getActivity().MODE_PRIVATE).edit();
+        SharedPreferences.Editor edit = getActivity().getSharedPreferences(MyConstants.APP_PREFERENCES, getActivity().MODE_PRIVATE).edit();
         edit.putBoolean(RECORD_FIRST, firstTime);
         edit.commit();
     }
@@ -315,19 +314,19 @@ public class RecordFragment extends Fragment {
         }
     }
 
-//    public void copy(File src, File dst) throws IOException {
-//        InputStream in = new FileInputStream(src);
-//        OutputStream out = new FileOutputStream(dst);
-//
-//        // Transfer bytes from in to out
-//        byte[] buf = new byte[1024];
-//        int len;
-//        while ((len = in.read(buf)) > 0) {
-//            out.write(buf, 0, len);
-//        }
-//        in.close();
-//        out.close();
-//    }
+    public void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
 
     public boolean rename(File from, File to) {
         if(from.exists()) {
