@@ -1,10 +1,15 @@
 package ca.mcnallydawes.justrecord;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -56,6 +61,37 @@ public class RecordFragment extends Fragment {
     private int mNextRecordingNumber;
     private int mPartialRecordingNumber;
     private OnRecordingSavedListener mOnRecordingSavedListener;
+
+    private IRecordServiceFunctions service = null;
+
+    /*
+    This is essentially the callback that the service uses to notify about changes.
+     */
+    private IRecordListenerFunctions listener = new IRecordListenerFunctions() {
+        @Override
+        public void setRecordTime() {
+
+        }
+    };
+
+    private ServiceConnection svcConn = new ServiceConnection() {
+
+        /*
+        We register ourselves to the service so we can receive updates.
+         */
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            service = (IRecordServiceFunctions) binder;
+
+            try {
+                service.registerFragment(RecordFragment.this, listener);
+            } catch (Throwable t) {
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            service = null;
+        }
+    };
 
     public static RecordFragment newInstance() {
         return new RecordFragment();
