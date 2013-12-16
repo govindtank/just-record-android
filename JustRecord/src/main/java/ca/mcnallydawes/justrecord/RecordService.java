@@ -42,6 +42,13 @@ public class RecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Bundle b = intent.getExtras();
+        if(b != null) {
+            mRecordingPath = b.getString(MyConstants.SERVICE_RECORDING_PATH);
+        } else {
+            mRecordingPath = null;
+        }
+
         if(mRecordingPath != null) {
             mMediaRecorder = new MediaRecorder();
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -56,6 +63,7 @@ public class RecordService extends Service {
             }
 
             mMediaRecorder.start();
+            Toast.makeText(this, "Recording.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Unable to start recording.", Toast.LENGTH_SHORT).show();
         }
@@ -89,12 +97,13 @@ public class RecordService extends Service {
         }
 
         @Override
-        public void stopRecording() {
+        public void stopRecording(Fragment fragment) {
             if(mMediaRecorder != null) {
                 mMediaRecorder.stop();
                 mMediaRecorder.release();
                 mMediaRecorder = null;
             }
+            Toast.makeText(fragment.getActivity(), "Stop recording.", Toast.LENGTH_SHORT).show();
         }
     }
 }

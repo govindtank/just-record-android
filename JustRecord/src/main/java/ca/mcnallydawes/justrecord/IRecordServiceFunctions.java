@@ -9,5 +9,5 @@ public interface IRecordServiceFunctions {
     public void registerFragment(Fragment fragment, IRecordListenerFunctions callback);
     public void unregisterFragment(Fragment fragment);
     public void pauseRecording();
-    public void stopRecording();
+    public void stopRecording(Fragment fragment);
 }

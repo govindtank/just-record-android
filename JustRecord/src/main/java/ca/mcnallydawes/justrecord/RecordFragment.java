@@ -1,6 +1,7 @@
 package ca.mcnallydawes.justrecord;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +22,6 @@ import android.widget.Space;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
@@ -195,26 +190,34 @@ public class RecordFragment extends Fragment {
 
             mChronometerRunning = true;
             mRecordButton.setSelected(mChronometerRunning);
+//
+//            mRecorder = new MediaRecorder();
+//            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//            mRecorder.setOutputFile(MyConstants.APP_DIRECTORY_STRING + "/" + PARTIAL_RECORDING_NAME + getRecordingString(mPartialRecordingNumber) + ".mp4");
+//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//
+//            try {
+//                mRecorder.prepare();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            mRecorder.start();
 
-            mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mRecorder.setOutputFile(MyConstants.APP_DIRECTORY_STRING + "/" + PARTIAL_RECORDING_NAME + getRecordingString(mPartialRecordingNumber) + ".mp4");
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            Intent intent = new Intent(getActivity(), RecordService.class);
+            intent.putExtra(MyConstants.SERVICE_RECORDING_PATH, MyConstants.APP_DIRECTORY_STRING + "/" + PARTIAL_RECORDING_NAME + getRecordingString(mPartialRecordingNumber) + ".mp4");
 
-            try {
-                mRecorder.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mRecorder.start();
+            getActivity().startService(intent);
+            getActivity().bindService(intent, svcConn, Context.BIND_AUTO_CREATE);
         } else {
             Toast.makeText(getActivity(), "Can't read/write to storage.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void stopRecording() {
+        if(service != null) service.stopRecording(this);
+        getActivity().stopService(new Intent(getActivity(), RecordService.class));
         if(mRecorder != null) {
             mRecorder.stop();
             mRecorder.release();
