@@ -2,13 +2,16 @@ package ca.mcnallydawes.justrecord;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioManager;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -17,18 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by jeffrey on 11/6/13.
@@ -53,6 +52,45 @@ public class SavedFragment extends Fragment {
     private Runnable mSeekBarRunnable;
     private TextView mPlaybackTimeTV;
     private TextView mPlaybackDurationTV;
+
+    private IPlayServiceFunctions service = null;
+    private IPlayListenerFunctions listener = new IPlayListenerFunctions() {
+        @Override
+        public void setPlaybackTime(long seconds) {
+
+        }
+
+        @Override
+        public void finishedPlaying() {
+            mPlayerState = MediaPlayerState.STOPPED;
+            mAdapter.showPausedItem(mClickedItem);
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void updateProgressBar(int position) {
+            mSeekBar.setProgress(position);
+        }
+    };
+
+    private ServiceConnection svcConn = new ServiceConnection() {
+
+        /*
+        We register ourselves to the service so we can receive updates.
+         */
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            service = (IPlayServiceFunctions) binder;
+
+            try {
+                service.registerFragment(SavedFragment.this, listener);
+            } catch (Throwable t) {
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            service = null;
+        }
+    };
 
     public static SavedFragment newInstance() {
         return new SavedFragment();
@@ -86,6 +124,7 @@ public class SavedFragment extends Fragment {
                 } else if(mMediaPlayer == null && fromUser) {
                     mPlaybackTimeTV.setText(getTimeString(progress));
                 }
+                if(service != null) service.seekTo(progress);
             }
 
             @Override
@@ -232,52 +271,70 @@ public class SavedFragment extends Fragment {
     }
 
     private void playFile(File file, int start) {
-        mMediaPlayer = new MediaPlayer();
-
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                stopPlayback();
-                mAdapter.showPausedItem(mClickedItem);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            mMediaPlayer.setDataSource(file.getPath());
-            mMediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        mMediaPlayer.seekTo(start);
-        mMediaPlayer.start();
+//        mMediaPlayer = new MediaPlayer();
+//
+//        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                stopPlayback();
+//                mAdapter.showPausedItem(mClickedItem);
+//                mAdapter.notifyDataSetChanged();
+//            }
+//        });
+//
+//        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//
+//        try {
+//            mMediaPlayer.setDataSource(file.getPath());
+//            mMediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        mMediaPlayer.seekTo(start);
+//        mMediaPlayer.start();
         mPlayerState = MediaPlayerState.PLAYING;
+
+        Intent intent = new Intent(getActivity(), PlayService.class);
+        intent.putExtra(MyConstants.SERVICE_RECORDING_PATH, file.getAbsolutePath());
+        intent.putExtra(MyConstants.SERVICE_RECORDING_START, start);
+
+        if(getActivity().bindService(intent, svcConn, Context.BIND_AUTO_CREATE) && service != null) {
+            service.startPlayback(file, start);
+        } else {
+            getActivity().startService(intent);
+            getActivity().bindService(intent, svcConn, Context.BIND_AUTO_CREATE);
+        }
     }
 
     private void pausePlayback() {
-        mMediaPlayer.pause();
+//        mMediaPlayer.pause();
         mPlayerState = MediaPlayerState.PAUSED;
+        if(service != null) service.togglePlayback();
     }
 
     private void resumePlayback() {
-        if(mMediaPlayer != null) {
-            mMediaPlayer.start();
-            mPlayerState = MediaPlayerState.PLAYING;
-        } else {
+        if(mPlayerState == MediaPlayerState.PLAYING)
             mPlayerState = MediaPlayerState.STOPPED;
-        }
+        else if(mPlayerState == MediaPlayerState.STOPPED)
+            mPlayerState = MediaPlayerState.PLAYING;
+//        if(mMediaPlayer != null) {
+//            mMediaPlayer.start();
+//            mPlayerState = MediaPlayerState.PLAYING;
+//        } else {
+//            mPlayerState = MediaPlayerState.STOPPED;
+//        }
+        if(service != null) service.togglePlayback();
     }
 
     private void stopPlayback() {
-        if(mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
+//        if(mMediaPlayer != null) {
+//            mMediaPlayer.stop();
+//            mMediaPlayer.release();
+//            mMediaPlayer = null;
+//        }
         mPlayerState = MediaPlayerState.STOPPED;
+        if(service != null) service.stopPlayback();
     }
 
 //    private void savedFilterButtonTap (View btn) {

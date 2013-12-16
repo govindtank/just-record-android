@@ -5,4 +5,6 @@ package ca.mcnallydawes.justrecord;
  */
 public interface IPlayListenerFunctions {
     public void setPlaybackTime(long seconds);
+    public void finishedPlaying();
+    public void updateProgressBar(int position);
 }

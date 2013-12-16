@@ -3,7 +3,6 @@ package ca.mcnallydawes.justrecord;
 import android.os.Environment;
 
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Created by H100173 on 11/8/13.
@@ -19,4 +18,5 @@ public class MyConstants {
 
     public static String SERVICE_RECORDING_PATH = APP_IDENTIFIER + ".pathToRecordFile";
     public static String SERVICE_SAVED_PATH = APP_IDENTIFIER + ".pathToSavedFile";
+    public static String SERVICE_RECORDING_START = APP_IDENTIFIER + ".recordingStartTime";
 }

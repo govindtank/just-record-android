@@ -10,7 +10,8 @@ import java.io.File;
 public interface IPlayServiceFunctions {
     public void registerFragment(Fragment fragment, IPlayListenerFunctions callback);
     public void unregisterFragment(Fragment fragment);
-    public void startPlayback(File file);
+    public void startPlayback(File file, int start);
     public void togglePlayback();
     public void stopPlayback();
+    public void seekTo(int progress);
 }
