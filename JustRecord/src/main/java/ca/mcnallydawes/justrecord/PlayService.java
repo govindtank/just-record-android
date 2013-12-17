@@ -67,6 +67,7 @@ public class PlayService extends Service {
                     for (Fragment client : mClients.keySet()) {
                         finishPlayingForClient(client);
                     }
+                    stopSelf();
                 }
             });
 
@@ -148,6 +149,7 @@ public class PlayService extends Service {
                         for (Fragment client : mClients.keySet()) {
                             finishPlayingForClient(client);
                         }
+                        stopSelf();
                     }
                 });
 

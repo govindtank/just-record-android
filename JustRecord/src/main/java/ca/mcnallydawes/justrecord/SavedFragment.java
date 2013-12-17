@@ -264,6 +264,12 @@ public class SavedFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(svcConn != null) getActivity().unbindService(svcConn);
+    }
+
     public void finishActionMode() {
         if(mActionMode != null) {
             mActionMode.finish();
