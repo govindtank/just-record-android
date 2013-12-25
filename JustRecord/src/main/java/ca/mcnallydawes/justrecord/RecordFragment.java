@@ -124,7 +124,7 @@ public class RecordFragment extends Fragment {
         mSpace0 = (Space) rootView.findViewById(R.id.record_space_0);
 
         if(getFirstTimeRecord()) {
-            Toast.makeText(getActivity(), "You can start, resume, and pause\\na recording with the big red button.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "You can start, resume, and pause\na recording with the big red button.", Toast.LENGTH_LONG).show();
             setFirstTimeRecord(false);
         }
 
